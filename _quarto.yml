@@ -1,0 +1,31 @@
+project:
+  type: website
+
+website:
+  title: "Patrick Heldebrandt"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: EPPS6323 Assignments
+        menu:
+          - href: Assignment1.qmd
+            text: Assignment1
+          - href: Assignment2.qmd
+            text: Assignment2
+        
+      - href: projects.qmd
+        text: Projects
+      - href: about.qmd
+        text: About
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
+
+editor: visual
+
