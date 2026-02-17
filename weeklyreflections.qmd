@@ -8,7 +8,7 @@ A. AI should be used as a tool as opposed to a replacement to creation. AI does 
 
 B. AGI (artificial general intelligence) refers to AI systems with human level general intelligence. The current AI models have narrow intelligence and focus on language models and image recognition, while AGI is similar to human reasoning and learning. AGI models is characterizes as having the ability to learn new tasks independently, and the ability to reason and solve problems. AGI can help to automate literature review and knowledge synthesis, accelerating scientific discovery, and even generate new theories. However, an over reliance on AGI systems will reduce the role of human researchers, in addition there are concerns over control and accountability.
 
-## February 18
+## February 17
 
 A. AI can help in assisting with literature review by quickly summarizing scientific papers, and highlighting important information and relationships. This will help to reduce the time required to manually read large volumes of research and focus on interpreting results. AI can also be used for green fielding and brainstorming, by providing quick information that will help to fill in gaps and provide a quick understanding of a subject before conducting more research.
 
