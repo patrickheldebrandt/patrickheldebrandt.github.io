@@ -2,7 +2,6 @@
 title: "About"
 ---
 
-Assignments:
-
-```         
-```
+::: {.callout-note style="gray" appearance="minimal" icon="false"}
+**I am a student at the University of Texas at Dallas pursuing my Master of Science In Economics. My academic interests focus on econometrics and international economics with an emphasis on empirical analysis and statistical decision-making. Through my coursework I have developed strong skills in statistical modeling, economic theory and data analysis. I am particularly interested in applying quantitative methods to financial markets and decision making under uncertainty. I have prior experience supporting financial and strategic analysis projects, and over the summer I will continue to develop these skills in quantitative methods to real-world economic and operational problems during the summer at American Airlines.**
+:::

@@ -14,9 +14,14 @@ website:
             text: Assignment1
           - href: Assignment2.qmd
             text: Assignment2
-        
       - href: projects.qmd
         text: Projects
+      - text: Participation 
+        menu: 
+          - href: weeklyreflections.qmd
+            text: Weekly Reflections
+          - href: log.qmd
+            text: AI Collaboration Log
       - href: about.qmd
         text: About
 

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Assignment 1 – Patrick Heldebrandt</title>
+<title>AI Collaboration Log – Patrick Heldebrandt</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -143,23 +143,15 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#lab-01" id="toc-lab-01" class="nav-link active" data-scroll-target="#lab-01">Lab 01</a></li>
-  <li><a href="#lab-02" id="toc-lab-02" class="nav-link" data-scroll-target="#lab-02">Lab 02</a></li>
-  <li><a href="#teds2016-data-set" id="toc-teds2016-data-set" class="nav-link" data-scroll-target="#teds2016-data-set">TEDS2016 Data Set</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Assignment 1</h1>
+<h1 class="title">AI Collaboration Log</h1>
 </div>
 
 
@@ -176,104 +168,10 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="lab-01" class="level2">
-<h2 class="anchored" data-anchor-id="lab-01">Lab 01</h2>
-<p>- <a href="../Lab01.html">Lab01</a></p>
-</section>
-<section id="lab-02" class="level2">
-<h2 class="anchored" data-anchor-id="lab-02">Lab 02</h2>
-<p>- <a href="..//Lab02.html">Lab02</a></p>
-</section>
-<section id="teds2016-data-set" class="level2">
-<h2 class="anchored" data-anchor-id="teds2016-data-set">TEDS2016 Data Set</h2>
-<ol start="4" type="1">
-<li>What problems do you encounter when working with the dataset?
-<ul>
-<li><p>There are missing value (NA)</p></li>
-<li><p>labelled variables as opposed to numeric</p></li>
-<li><p>Variables must be transformed to analyze</p></li>
-</ul></li>
-<li>Remove missing values using filter()</li>
-</ol>
-<div class="callout callout-style-simple callout-note no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
-<p>TEDS_clean &lt;- TEDS_2016 %&gt;%</p>
-<p>filter(!is.na(income))</p>
-</div>
-</div>
-</div>
-<ol start="6" type="1">
-<li><p><strong>Method</strong></p>
-<p>Step 1: Use filter() to remove missing values</p>
-<p>Step 2: Explore Tondu distribution using group_by() and summarize() to count observations</p>
-<p>Step 3: For categorical variables (gender, DPP support, education, and economic perceptions) we use frequency tables and for numerical values (age and income) we use box plots to compare distributions. Using ggplot(</p></li>
-<li><p>Step 1: remove missing values, filter()</p>
-<p>Step 2: Install (“descr”) and use freq(TEDS_2016$votetsai)</p>
-<p>Step 3: Create Bar chart using ggplot2</p></li>
-</ol>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>install.packages (“descr”)</p>
-<p>library (descr)</p>
-<p>teds_vote &lt;- TEDS_2016 %&gt;%</p>
-<p>filter(!is.na(votetsai))</p>
-<p>Freq(teds_vote$votetsai)</p>
-<p>Freq(teds_vote$votetsai,</p>
-<p>plot = FALSE)</p>
-<p>ggplot(teds_vote, aes(x = votetsai)) +</p>
-<p>geom_bar() +</p>
-<p>labs(</p>
-<p>title = “Vote for DPP Candidate Tsai Ing-wen”,</p>
-<p>x = “Vote for Tsai Ing-wen”,</p>
-<p>y = “Count”</p>
-<p>)</p>
-</div>
-</div>
-<ol start="8" type="1">
-<li><div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>TEDS_2016$Tondu&lt;-as.numeric(TEDS_2016$Tondu,labels=c(“Unification now”, “Status quo, unif. in future”, “Status quo, decide later”, “Status quo forever”, “Status quo, indep. in future”, “Independence now”, “No response”))</p>
-</div>
-</div></li>
-</ol>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/Rplot.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="502"></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/Rplot01.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/Screenshot 2026-02-17 at 3.52.24 AM.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="350"></p>
-</figure>
-</div>
+<p>Assignments:</p>
+<pre><code></code></pre>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

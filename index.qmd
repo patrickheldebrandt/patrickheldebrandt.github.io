@@ -4,7 +4,7 @@ title: ""
 
 # Website of Patrick Heldebrandt
 
-## Courses:
+## Current Courses: 
 
 \- "Knowledge Mining"\
 - "Health and Policy Analysis\
