@@ -243,5 +243,26 @@
     "title": "Assignment 2",
     "section": "Step 5: Reflection",
     "text": "Step 5: Reflection\nWhile each AI model approached the literature review using similar methodologies basing the framework off of PRISMA. Each of the AI models focused on different aspects, for example, Grok3 primarily focused heavily on using raw data to explain their methodology while ChatGPT and CoPilot used less statistics and focused more on interpretation. While unique both of these approaches would benefit strongly if used for preliminary research or broad brainstorming purposes. I found that adding requirements at the end of a prompt helps to refine the results to what you are looking for, you are able to add short bullet points on how you expect the outcome to look like and what specific attributes you are looking for. This was especially useful when you are looking to make small adjustments to how the AI model is displaying their findings, for example, Grok3’s model was focused on statistics and using data from case studies for their methodology by making a requirement to focus on interpretation and “storytelling” it helps for the model to adjust the language. I learned that when properly guided using clear instructions AI models are very effective at organizing information. Using multiple models allows you to leverage each of their strengths and combine them to get the output that you are looking for. These models are especially useful for structuring and overall synthesis, however, is not accurate for a academic judgement. For example, there must be human input for evaluating accuracy and critically interpreting findings."
+  },
+  {
+    "objectID": "weeklyreflections.html",
+    "href": "weeklyreflections.html",
+    "title": "Weekly Reflections",
+    "section": "",
+    "text": "A. AI should be used as a tool as opposed to a replacement to creation. AI does not have true understanding and generates output based on patterns from training data because of this it will not create anything truly original. Originality is the creation of new ideas, theories or methods which involves human creativity as well as critical thinking.\nB. AGI (artificial general intelligence) refers to AI systems with human level general intelligence. The current AI models have narrow intelligence and focus on language models and image recognition, while AGI is similar to human reasoning and learning. AGI models is characterizes as having the ability to learn new tasks independently, and the ability to reason and solve problems. AGI can help to automate literature review and knowledge synthesis, accelerating scientific discovery, and even generate new theories. However, an over reliance on AGI systems will reduce the role of human researchers, in addition there are concerns over control and accountability."
+  },
+  {
+    "objectID": "weeklyreflections.html#february-10",
+    "href": "weeklyreflections.html#february-10",
+    "title": "Weekly Reflections",
+    "section": "",
+    "text": "A. AI should be used as a tool as opposed to a replacement to creation. AI does not have true understanding and generates output based on patterns from training data because of this it will not create anything truly original. Originality is the creation of new ideas, theories or methods which involves human creativity as well as critical thinking.\nB. AGI (artificial general intelligence) refers to AI systems with human level general intelligence. The current AI models have narrow intelligence and focus on language models and image recognition, while AGI is similar to human reasoning and learning. AGI models is characterizes as having the ability to learn new tasks independently, and the ability to reason and solve problems. AGI can help to automate literature review and knowledge synthesis, accelerating scientific discovery, and even generate new theories. However, an over reliance on AGI systems will reduce the role of human researchers, in addition there are concerns over control and accountability."
+  },
+  {
+    "objectID": "weeklyreflections.html#february-17",
+    "href": "weeklyreflections.html#february-17",
+    "title": "Weekly Reflections",
+    "section": "February 17",
+    "text": "February 17\nA. AI can help in assisting with literature review by quickly summarizing scientific papers, and highlighting important information and relationships. This will help to reduce the time required to manually read large volumes of research and focus on interpreting results. AI can also be used for green fielding and brainstorming, by providing quick information that will help to fill in gaps and provide a quick understanding of a subject before conducting more research.\nB. I currently use ChatGPT and Claude, ChatGPT is beneficial for providing short and understandable information, many times it is useful for rewording information or breaking a subject down. Claude is also useful for providing more detailed explanations and is helpful for when I need to understand the broader context of a topic."
   }
 ]
