@@ -13,3 +13,11 @@ B. AGI (artificial general intelligence) refers to AI systems with human level g
 A. AI can help in assisting with literature review by quickly summarizing scientific papers, and highlighting important information and relationships. This will help to reduce the time required to manually read large volumes of research and focus on interpreting results. AI can also be used for green fielding and brainstorming, by providing quick information that will help to fill in gaps and provide a quick understanding of a subject before conducting more research.
 
 B. I currently use ChatGPT and Claude, ChatGPT is beneficial for providing short and understandable information, many times it is useful for rewording information or breaking a subject down. Claude is also useful for providing more detailed explanations and is helpful for when I need to understand the broader context of a topic.
+
+## Feburary 18
+
+A. Information consists of raw data while knowledge comes from an interpretation and contextualization of that information. Knowledge requires judgement and causality. Humans find knowledge through experience, trial and error, comparison. 
+
+B. AI discrepancies and failures:
+  - Hallucination; fabricating citations, producing incorrect statistics, however, the AI will use confident tone despite uncertainty
+  - Bias; AI will mirror patterns in training data and reinforce dominant narratives. 

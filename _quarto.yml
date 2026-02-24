@@ -22,6 +22,8 @@ website:
             text: Weekly Reflections
           - href: log.qmd
             text: AI Collaboration Log
+          - href: readingnotebook.qmd
+            text: Reading Notebook            
       - href: about.qmd
         text: About
 
