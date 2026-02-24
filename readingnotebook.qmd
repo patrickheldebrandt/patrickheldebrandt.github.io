@@ -2,16 +2,18 @@
 title: "Reading Notebook"
 ---
 
-## Skim Strategically
+## 1. Skim Strategically
 - Read section headings
 - Write prediction: “This chapter is about…”
 
-## Active Reading**
+## 2. Active Reading
+- Annotative
+- Question Oriented
 
-## Synthesis
+## 3. Synthesis
 - Write 5 bullet summary
 - Write 1 application idea
 
-## Retention
+## 4. Retention
 - Close book
 - Write understanding from memory
