@@ -21,3 +21,5 @@ A. Information consists of raw data while knowledge comes from an interpretation
 B. AI discrepancies and failures:
   - Hallucination; fabricating citations, producing incorrect statistics, however, the AI will use confident tone despite uncertainty
   - Bias; AI will mirror patterns in training data and reinforce dominant narratives. 
+  
+  
