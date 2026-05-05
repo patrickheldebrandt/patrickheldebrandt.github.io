@@ -20,7 +20,7 @@ title: "Assignment 2"
 
 -   Structure: ChatGPT's output included a methodology section and followed a systematic review format inspired by PRISMA.
 
--    Synthesis: Key findings from data mining and machine learning application were well summarized. ChatGPT's output was primarily comprised of short definitions summarized in bullet points that gave concise interpretations that weren't fully flushed out.
+-   Synthesis: Key findings from data mining and machine learning application were well summarized. ChatGPT's output was primarily comprised of short definitions summarized in bullet points that gave concise interpretations that weren't fully flushed out.
 
 -   Trends and Gaps: ChatGPT identified trends with ML and its widespread use across healthcare, finance, maufacturing, and scientific research. ML is integrated with Big Data and Cloud Computing which is used for large scale ML and real time analytics. It also identifies challenges such as incomplete or biased data that ML performance depends on, and data privacy concerns with ML. Overall the output provided a good starting point for areas to look at, many of these findings were brief and require more research.
 
@@ -36,7 +36,7 @@ title: "Assignment 2"
 
 -   Structure: The output included a methodology section and followed a systematic review format that was also inspired by PRISMA.
 
--    Synthesis: Key findings of data mining and machine learning applications were extensive and well summarized, the output provided many examples that would help for a literature review.
+-   Synthesis: Key findings of data mining and machine learning applications were extensive and well summarized, the output provided many examples that would help for a literature review.
 
 -   Trends and Gaps: The output for trends and gaps was very narrow, providing a few examples and a short 1 sentence summary for each, this would help to gather ideas, however, is not extensive enough to build a paper out of.
 
@@ -52,7 +52,7 @@ title: "Assignment 2"
 
 -   Structure: The output included a methodology section and followed a systematic review format that was also inspired by PRISMA.
 
--    Synthesis: Grok3 included a lot of figures and citations using sources peer reviewed journal articles for the metrics. The key findings included percentages of each industry that used machine learning or data mining.
+-   Synthesis: Grok3 included a lot of figures and citations using sources peer reviewed journal articles for the metrics. The key findings included percentages of each industry that used machine learning or data mining.
 
 -   Trends and Gaps: Similarly, the summary of the trends and gaps were largely comprised of figures from previous studies and articles. While this provides good information on the statistics of ML trends and gaps, it is too technical to understand and does little to build an understanding of what the measurements mean in terms of their real world implications.
 
