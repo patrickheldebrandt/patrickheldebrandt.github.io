@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>About – Patrick Heldebrandt</title>
+<title>march-24- – Patrick Heldebrandt</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -107,6 +107,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="./Assignment2.html">
  <span class="dropdown-text">Assignment2</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./Assignment3.html">
+ <span class="dropdown-text">Assignment3</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item">
@@ -133,7 +137,7 @@ ul.task-list li input[type="checkbox"] {
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link active" href="./about.html" aria-current="page"> 
+    <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -151,37 +155,169 @@ ul.task-list li input[type="checkbox"] {
         
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">About</h1>
-</div>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
-<div class="quarto-title-meta">
 
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<div class="callout callout-style-simple callout-note no-icon" style="gray">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
-<p><strong>I am a student at the University of Texas at Dallas pursuing my Master of Science In Economics. My academic interests focus on econometrics and international economics with an emphasis on empirical analysis and statistical decision-making. Through my coursework I have developed strong skills in statistical modeling, economic theory and data analysis. I am particularly interested in applying quantitative methods to financial markets and decision making under uncertainty. I have prior experience supporting financial and strategic analysis projects, and over the summer I will continue to develop these skills in quantitative methods to real-world economic and operational problems during the summer at American Airlines.</strong></p>
-</div>
-</div>
-</div>
+<ol type="1">
+<li>How NLP and LLMs Have Advanced Knowledge Mining</li>
+</ol>
+<ol type="a">
+<li>Summary of Findings Across the three survey papers, the core takeaway is that large language models (LLMs) have fundamentally transformed knowledge mining—shifting it from structured, pipeline-based extraction to general-purpose, context-aware reasoning systems. Key advancements:</li>
+</ol>
+<ol type="1">
+<li>From Pipeline NLP → End-to-End Learning</li>
+</ol>
+<ul>
+<li>Traditional NLP required separate steps: tokenization → parsing → entity recognition → relation extraction.</li>
+<li>LLMs unify these into a single model that can directly extract, summarize, and reason over knowledge.</li>
+</ul>
+<ol start="2" type="1">
+<li>From Structured Databases → Unstructured Knowledge Understanding</li>
+</ol>
+<ul>
+<li>Older systems relied heavily on structured knowledge bases (e.g., ontologies).</li>
+<li>LLMs can mine knowledge from:
+<ul>
+<li>Raw text</li>
+<li>Documents</li>
+<li>Conversations → enabling knowledge discovery at scale without manual schema design.</li>
+</ul></li>
+</ul>
+<ol start="3" type="1">
+<li>Emergence of Pretraining + Fine-tuning Paradigm</li>
+</ol>
+<ul>
+<li>Pretraining on massive corpora gives LLMs implicit world knowledge.</li>
+<li>Fine-tuning or prompting adapts them for:
+<ul>
+<li>Information extraction</li>
+<li>Question answering</li>
+<li>Knowledge base completion</li>
+</ul></li>
+</ul>
+<ol start="4" type="1">
+<li>In-context Learning &amp; Prompting</li>
+</ol>
+<ul>
+<li>Models no longer require task-specific training.</li>
+<li>Knowledge mining tasks can be performed via:
+<ul>
+<li>Few-shot prompting</li>
+<li>Zero-shot reasoning → dramatically lowers cost of deploying knowledge systems.</li>
+</ul></li>
+</ul>
+<ol start="5" type="1">
+<li>Knowledge-Augmented LLMs</li>
+</ol>
+<ul>
+<li>Integration with external sources:
+<ul>
+<li>Retrieval-Augmented Generation (RAG)</li>
+<li>Knowledge graphs → improves factual accuracy and reduces hallucination.</li>
+</ul></li>
+</ul>
+<ol start="6" type="1">
+<li>Evaluation Challenges (from Chang et al.&nbsp;2024)</li>
+</ol>
+<ul>
+<li>Traditional NLP metrics (accuracy, F1) are insufficient.</li>
+<li>New evaluation focuses on:
+<ul>
+<li>Reasoning ability</li>
+<li>Faithfulness</li>
+<li>Robustness</li>
+<li>Bias</li>
+</ul></li>
+</ul>
+<ol start="2" type="a">
+<li>Key Concepts Here are the core concepts you should highlight in your assignment:</li>
+</ol>
+<ol type="1">
+<li>Pretrained Language Models (PLMs)</li>
+</ol>
+<ul>
+<li>Models trained on large corpora (e.g., GPT-style, BERT-style)</li>
+<li>Encode latent knowledge representations</li>
+</ul>
+<ol start="2" type="1">
+<li>Knowledge Extraction</li>
+</ol>
+<ul>
+<li>Named Entity Recognition (NER)</li>
+<li>Relation extraction</li>
+<li>Event extraction → now handled implicitly by LLMs</li>
+</ul>
+<ol start="3" type="1">
+<li>Knowledge Representation</li>
+</ol>
+<ul>
+<li>Transition from:
+<ul>
+<li>Structured knowledge graphs → to</li>
+<li>Distributed representations (embeddings)</li>
+</ul></li>
+</ul>
+<ol start="4" type="1">
+<li>Knowledge-Augmented Systems</li>
+</ol>
+<ul>
+<li>Retrieval-Augmented Generation (RAG)</li>
+<li>Hybrid systems combining:
+<ul>
+<li>LLMs + databases + search</li>
+</ul></li>
+</ul>
+<ol start="5" type="1">
+<li>In-Context Learning</li>
+</ol>
+<ul>
+<li>Learning from examples in prompts instead of retraining</li>
+</ul>
+<ol start="6" type="1">
+<li>Reasoning &amp; Chain-of-Thought</li>
+</ol>
+<ul>
+<li>LLMs can simulate reasoning steps:
+<ul>
+<li>Multi-hop inference</li>
+<li>Logical reasoning</li>
+</ul></li>
+</ul>
+<ol start="7" type="1">
+<li>Hallucination &amp; Reliability</li>
+</ol>
+<ul>
+<li>Major limitation:
+<ul>
+<li>Models generate plausible but incorrect knowledge</li>
+</ul></li>
+<li>Drives need for:
+<ul>
+<li>Grounding</li>
+<li>Verification systems</li>
+</ul></li>
+</ul>
+<ol start="8" type="1">
+<li>Evaluation Frameworks</li>
+</ol>
+<ul>
+<li>New benchmarks:
+<ul>
+<li>Truthfulness</li>
+<li>Generalization</li>
+<li>Robustness to adversarial inputs</li>
+</ul></li>
+</ul>
+<ol start="3" type="a">
+<li>Knowledge Map / Graph of Advancements Below is a conceptual knowledge graph you can replicate in PowerPoint, Miro, or draw for submission.</li>
+</ol>
+<p>Core structure [ Large Language Models (LLMs) ] | ——————————————————— | | | [Pretraining] [Architecture] [Capabilities] | | | Massive Text Data Transformers Reasoning / QA Self-Supervised Attention Mechanism Summarization Learning Generation</p>
+<p>Knowledge Mining Evolution Traditional NLP → LLM-based NLP ————————————————————————— Pipeline (multi-step) → End-to-end unified models Rule-based / feature engineering → Data-driven learning Structured data dependence → Unstructured data mining Task-specific models → General-purpose models</p>
+<p>Knowledge Mining tasks enhanced by LLMs [LLMs] | ├── Knowledge Extraction │ ├── Entities │ ├── Relations │ └── Events │ ├── Knowledge Completion │ └── Fill missing facts │ ├── Question Answering │ └── Multi-hop reasoning │ ├── Summarization │ └── Compress large knowledge sources │ └── Knowledge Generation └── Create new hypotheses / insights</p>
+<p>Augmented Systems [LLMs] | ——————— | | [Retriever] [Knowledge Base] | | External Docs Structured Data | (RAG Systems)</p>
+<p>Challenges layer [Challenges] | ———————— | | | Hallucination Bias Evaluation Limits | Need for: - Grounding - Verification - Benchmarks</p>
 
 
 

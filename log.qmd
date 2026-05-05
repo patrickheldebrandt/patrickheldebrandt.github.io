@@ -1,8 +1,34 @@
 ---
 title: "AI Collaboration Log"
+format: 
+  html:
+    css: styles.css
 ---
 
-Assignments:
 
-```         
-```
+## Assignment 3
+
+::: {.border}
+
+**User**
+
+Conducting a linear regression returns this graph, provide alternative methods to improve the prediction capabilities. x is age, income, education and y is votes.
+
+**Assistant**
+
+Linear regression is not ideal because the dependent variable, votes, is binary. A better approach is logistic regression, which models the probability that vote = 1. Other methods include nonlinear terms, interaction terms, splines, decision trees, random forests, gradient boosting, and regularization.
+
+**User**
+
+Interpret a Logistic Regression, what does the output represent?
+
+**Assistant**
+
+Logistic regression models the probability that an outcome equals 1. The coefficients represent changes in log-odds, not direct changes in probability. Positive coefficients increase the likelihood of voting, while negative coefficients decrease it. Exponentiating coefficients gives odds ratios.
+
+:::
+
+## Assignment 4
+
+
+

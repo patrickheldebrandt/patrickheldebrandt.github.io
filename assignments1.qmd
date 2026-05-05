@@ -1,5 +1,0 @@
----
-title: "Assignment1"
----
-
-Assignment

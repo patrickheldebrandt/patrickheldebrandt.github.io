@@ -1,0 +1,150 @@
+
+
+1. How NLP and LLMs Have Advanced Knowledge Mining
+(a) Summary of Findings
+Across the three survey papers, the core takeaway is that large language models (LLMs) have fundamentally transformed knowledge mining—shifting it from structured, pipeline-based extraction to general-purpose, context-aware reasoning systems.
+Key advancements:
+1. From Pipeline NLP → End-to-End Learning
+* Traditional NLP required separate steps: tokenization → parsing → entity recognition → relation extraction.
+* LLMs unify these into a single model that can directly extract, summarize, and reason over knowledge.
+2. From Structured Databases → Unstructured Knowledge Understanding
+* Older systems relied heavily on structured knowledge bases (e.g., ontologies).
+* LLMs can mine knowledge from:
+    * Raw text
+    * Documents
+    * Conversations → enabling knowledge discovery at scale without manual schema design.
+3. Emergence of Pretraining + Fine-tuning Paradigm
+* Pretraining on massive corpora gives LLMs implicit world knowledge.
+* Fine-tuning or prompting adapts them for:
+    * Information extraction
+    * Question answering
+    * Knowledge base completion
+4. In-context Learning & Prompting
+* Models no longer require task-specific training.
+* Knowledge mining tasks can be performed via:
+    * Few-shot prompting
+    * Zero-shot reasoning → dramatically lowers cost of deploying knowledge systems.
+5. Knowledge-Augmented LLMs
+* Integration with external sources:
+    * Retrieval-Augmented Generation (RAG)
+    * Knowledge graphs → improves factual accuracy and reduces hallucination.
+6. Evaluation Challenges (from Chang et al. 2024)
+* Traditional NLP metrics (accuracy, F1) are insufficient.
+* New evaluation focuses on:
+    * Reasoning ability
+    * Faithfulness
+    * Robustness
+    * Bias
+
+(b) Key Concepts
+Here are the core concepts you should highlight in your assignment:
+1. Pretrained Language Models (PLMs)
+* Models trained on large corpora (e.g., GPT-style, BERT-style)
+* Encode latent knowledge representations
+2. Knowledge Extraction
+* Named Entity Recognition (NER)
+* Relation extraction
+* Event extraction
+→ now handled implicitly by LLMs
+3. Knowledge Representation
+* Transition from:
+    * Structured knowledge graphs
+→ to
+    * Distributed representations (embeddings)
+4. Knowledge-Augmented Systems
+* Retrieval-Augmented Generation (RAG)
+* Hybrid systems combining:
+    * LLMs + databases + search
+5. In-Context Learning
+* Learning from examples in prompts instead of retraining
+6. Reasoning & Chain-of-Thought
+* LLMs can simulate reasoning steps:
+    * Multi-hop inference
+    * Logical reasoning
+7. Hallucination & Reliability
+* Major limitation:
+    * Models generate plausible but incorrect knowledge
+* Drives need for:
+    * Grounding
+    * Verification systems
+8. Evaluation Frameworks
+* New benchmarks:
+    * Truthfulness
+    * Generalization
+    * Robustness to adversarial inputs
+
+(c) Knowledge Map / Graph of Advancements
+Below is a conceptual knowledge graph you can replicate in PowerPoint, Miro, or draw for submission.
+
+
+Core structure
+                    [ Large Language Models (LLMs) ]
+                                  |
+        ---------------------------------------------------------
+        |                        |                             |
+ [Pretraining]          [Architecture]               [Capabilities]
+        |                        |                             |
+ Massive Text Data       Transformers                Reasoning / QA
+ Self-Supervised         Attention Mechanism         Summarization
+ Learning                                            Generation
+
+Knowledge Mining Evolution
+        Traditional NLP                    →              LLM-based NLP
+---------------------------------------------------------------------------
+ Pipeline (multi-step)                    →     End-to-end unified models
+ Rule-based / feature engineering        →     Data-driven learning
+ Structured data dependence              →     Unstructured data mining
+ Task-specific models                    →     General-purpose models
+
+
+Knowledge Mining tasks enhanced by LLMs
+[LLMs]
+   |
+   ├── Knowledge Extraction
+   │     ├── Entities
+   │     ├── Relations
+   │     └── Events
+   │
+   ├── Knowledge Completion
+   │     └── Fill missing facts
+   │
+   ├── Question Answering
+   │     └── Multi-hop reasoning
+   │
+   ├── Summarization
+   │     └── Compress large knowledge sources
+   │
+   └── Knowledge Generation
+         └── Create new hypotheses / insights
+
+Augmented Systems
+              [LLMs]
+                 |
+        ---------------------
+        |                   |
+   [Retriever]        [Knowledge Base]
+        |                   |
+   External Docs       Structured Data
+        |
+   (RAG Systems)
+
+
+Challenges layer 
+        [Challenges]
+             |
+   ------------------------
+   |          |           |
+Hallucination  Bias   Evaluation Limits
+             |
+        Need for:
+   - Grounding
+   - Verification
+   - Benchmarks
+
+
+
+
+
+
+
+
