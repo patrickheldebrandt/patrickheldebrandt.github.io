@@ -14,7 +14,7 @@ website:
             text: Assignment1
           - href: Assignment2.qmd
             text: Assignment2
-          - href: assignments3.qmd
+          - href: Assignment3.qmd
             text: Assignment3
           - href: Assignment4.qmd
           - text: Assignment4

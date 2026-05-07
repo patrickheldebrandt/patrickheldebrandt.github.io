@@ -1,391 +1,61 @@
 ---
-title: "Assignment 2"
+title: "Assignment3"
 ---
 
-## Step 1: Initial Prompt
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
 
-“Conduct a 2,000-word structured systematic literature review on the applications of data mining and machine learning in real-world domains. Include a methodology section, synthesize key findings, identify trends and gaps, and propose one testable hypothesis. Use an academic tone and emulate systematic review standards.”
+library(haven)
+library(tidyverse)
+library(GGally)
 
-### Tested on:
 
--   ChatGPT
+## Step 3
 
--   CoPilot
+TEDS_2016 <- read_stata("https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true")
+summary(TEDS_2016)
 
--   Grok3
+## Step 4
 
-## Step 2: Analyze model Responses
+regplot <- function(x, y) {
+  fit <- lm(y ~ x)
+  plot(x, y)
+  abline(fit, col = "red")
+}
 
-### **ChatGPT**
+## Step 5
 
--   Structure: ChatGPT's output included a methodology section and followed a systematic review format inspired by PRISMA.
+teds <- na.omit(TEDS_2016[, c("votetsai", "age", "edu", "income")])
 
--   Synthesis: Key findings from data mining and machine learning application were well summarized. ChatGPT's output was primarily comprised of short definitions summarized in bullet points that gave concise interpretations that weren't fully flushed out.
+# Age and Vote
+regplot(teds$age, teds$votetsai)
 
--   Trends and Gaps: ChatGPT identified trends with ML and its widespread use across healthcare, finance, maufacturing, and scientific research. ML is integrated with Big Data and Cloud Computing which is used for large scale ML and real time analytics. It also identifies challenges such as incomplete or biased data that ML performance depends on, and data privacy concerns with ML. Overall the output provided a good starting point for areas to look at, many of these findings were brief and require more research.
+# Education and Vote
+regplot(teds$edu, teds$votetsai)
 
--   Hypothesis:
+# Income and Vote
+regplot(teds$income, teds$votetsai)
 
-    ChatGPT output: "Organizations that implement explainable machine learning models will experience significantly higher adoption rates and decision-making trust compared to organizations using non-interpretable models."
 
-    The hypothesis is testable, however, it would need to be altered by testing one of the two variables. Whether explainable machine learning models will experience either higher adoption rates or decision making trust, as opposed to "and" in order to better interpret the variables.
+## Step 6
 
--   References: The output cited 22 sources, which were all accurate and reputable research papers
+# What is the problem?
+# The dependent variable is binary, however, a linear regression assumes that the dependent variable must be continuous. 
 
-### **CoPilot**
+## Step 7
+# Conduct a logistic regression instead
 
--   Structure: The output included a methodology section and followed a systematic review format that was also inspired by PRISMA.
+logistic_reg <- glm(votetsai ~ age + edu + income,
+                   data = teds,
+                   family = binomial)
+summary(logistic_reg)
 
--   Synthesis: Key findings of data mining and machine learning applications were extensive and well summarized, the output provided many examples that would help for a literature review.
+probs <- predict(logistic_reg, type = "response")
+pred <- ifelse(probs > 0.5, 1, 0)
+table(Predicted = pred, Actual = teds$votetsai)
 
--   Trends and Gaps: The output for trends and gaps was very narrow, providing a few examples and a short 1 sentence summary for each, this would help to gather ideas, however, is not extensive enough to build a paper out of.
+# allows us to model the probabilities between 0 and 1 
 
--   Hypothesis:
-
-    CoPilot output: "Integrating domain-specific knowledge into machine learning models (e.g., through feature engineering, constraints, or hybrid architectures) significantly improves model interpretability and maintains or enhances predictive performance compared to purely data-driven models in high-stakes real-world applications."
-
-    The hypothesis is testable, and relevant as companies aim to adopt machine learning models in all sectors. Similarly, the hypothesis will likely need to revised to test for one hypothesis; either domain knowledge improving interpretability or predictive performance.
-
--   References: The output cited 25 sources, which were all accurate and reputable research papers
-
-### **Grok3**
-
--   Structure: The output included a methodology section and followed a systematic review format that was also inspired by PRISMA.
-
--   Synthesis: Grok3 included a lot of figures and citations using sources peer reviewed journal articles for the metrics. The key findings included percentages of each industry that used machine learning or data mining.
-
--   Trends and Gaps: Similarly, the summary of the trends and gaps were largely comprised of figures from previous studies and articles. While this provides good information on the statistics of ML trends and gaps, it is too technical to understand and does little to build an understanding of what the measurements mean in terms of their real world implications.
-
--   Hypothesis:
-
-    Grok3 output: "To address a key gap in privacy-preserving collaboration, the following hypothesis is proposed: The adoption of federated learning in cross-domain ML applications (e.g., healthcare and finance) will yield a minimum 20% improvement in out-of-sample AUC compared to siloed centralized models, without compromising data locality, testable via a multi-center prospective study using standardized benchmarks like MIMIC-III and Kaggle financial datasets."
-
-    While the hypothesis is highly relevant, it is not a good hypothesis. It is not testable because it aims to answer too many questions at once. However, it could provide a strong starting point and by dissecting the hypothesis we can focus on one area to study.
-
--   References: The output cited 78 sources, which were not all accurate and did not all include reputable sources, the list included sources from reddit and youtube.
-
-## Step 3: Refine the Prompt
-
-### **ChatGPT**
-
-**Deficiencies**: Lacked data from each of the sources, information was general and brief.
-
-**Prompt**: "Conduct a 2,000-word structured systematic literature review on the applications of data mining and machine learning in real-world domains. Include a methodology section, synthesize key findings, identify trends and gaps, and propose one testable hypothesis. Use an academic tone and emulate systematic review standards. Requirements: Use academic tone, Reference at least 20 reviewed studies, Provide detailed explanations (not brief summaries), Avoid generic statements, Emphasize synthesis and critical analysis"
-
-### CoPilot
-
-**Deficiencies**: Lacked data from each of the sources, information was very limited and could go into much more detail especially on key findings and analyzing trends and gaps.
-
-**Prompt**: "Write a 2,000-word systematic literature review on applications of data mining and machine learning in real-world domains. Include a methodology section, synthesize key findings, identify trends and gaps, and propose one testable hypothesis. Use an academic tone and emulate systematic review standards. Requirements: Use at least 20 reviewed studies and cite them in text, provide in-depth synthesis as opposed to summaries, compare findings across studies and explain patterns and similarities, the review must emphasize analytically depth and detailed evidence avoid general statements."
-
-### Grok3
-
-**Deficiencies**: Sources were not academic papers, lacked interpretations on presented data
-
-**Prompt**: "Write a 2,000-word systematic literature review on applications of data mining and machine learning in real-world domains. Include a methodology section, synthesize key findings, identify trends and gaps, and propose one testable hypothesis. Use an academic tone and emulate systematic review standards. Requirements: Use at least 20 peer reviewed academic papers from scholarly sources and cite them in-text, provide interpretations and synthesis for information presented, maintain an academic narrative that focuses on critical analysis and storytelling avoiding listing raw data."
-
-## Step 4: Cross-Model Collaboration
-
-::: {.callout-note appearance="simple" icon="false"}
-# Applications of Data Mining and Machine Learning in Real-World Domains: A Structured Systematic Literature Review
-
-## Abstract
-
-Data mining (DM) and machine learning (ML) have evolved from experimental analytical tools into foundational components of decision-making systems across healthcare, finance, manufacturing, agriculture, transportation, education, and digital platforms. Despite extensive empirical progress, the real-world impact of ML depends not only on predictive accuracy but also on data quality, interpretability, governance, and integration into operational workflows. This systematic literature review synthesizes evidence from over 25 peer-reviewed empirical studies and systematic surveys published between 2015 and 2025, adhering to systematic review standards including structured search, screening, quality appraisal, and thematic synthesis. Findings indicate that ML consistently improves predictive performance in perception-heavy tasks such as medical imaging and industrial defect detection, prioritization tasks such as fraud detection and student risk prediction, and optimization tasks such as predictive maintenance and energy forecasting. However, cross-domain synthesis reveals that real-world effectiveness is constrained by distribution shift, label scarcity, interpretability requirements, governance constraints, and integration challenges. Major trends include the rise of multimodal learning, explainable AI, and pipeline-centric deployment. Persistent gaps include limited external validation, insufficient causal evaluation of ML-driven interventions, and underdeveloped governance frameworks. Based on cross-domain synthesis, this review proposes a testable hypothesis that interpretable and decision-integrated ML systems produce greater sustained real-world impact than marginally more accurate black-box models. These findings highlight a paradigm shift from algorithm-centric optimization toward socio-technical ML systems designed for long-term reliability, accountability, and human-AI collaboration.
-
-------------------------------------------------------------------------
-
-## 1. Introduction
-
-The rapid expansion of digital data across economic and social systems has fundamentally transformed how organizations extract insight and make decisions. Data mining refers to the systematic discovery of patterns in large datasets, while machine learning enables computational systems to learn predictive relationships without explicit programming. Together, these approaches support predictive analytics, anomaly detection, classification, clustering, and optimization across diverse domains (Sarker, 2021; Rane et al., 2024).
-
-Initially confined to experimental settings, ML and DM now operate in high-stakes environments such as clinical diagnosis, financial risk assessment, industrial maintenance, transportation control, and educational intervention. In healthcare, deep learning models match or exceed human performance in diagnostic imaging tasks (Litjens et al., 2017; Battineni et al., 2020). In finance, gradient boosting and ensemble methods improve credit scoring accuracy and fraud detection efficiency (Nazareth and Reddy, 2023; Chen et al., 2021). In manufacturing, predictive maintenance systems reduce downtime and maintenance costs by anticipating equipment failures (Bousdekis et al., 2019; Jhaveri et al., 2022). Similar transformations have occurred in agriculture through crop yield prediction using remote sensing data (Benos et al., 2021), and in transportation via spatiotemporal traffic forecasting models (Boukerche and Wang, 2020).
-
-However, predictive accuracy alone does not guarantee operational success. Real-world deployment introduces constraints rarely reflected in experimental research, including noisy and incomplete data, distribution shifts, regulatory requirements, ethical considerations, and human decision-making dynamics. Empirical studies consistently demonstrate that data quality, evaluation methodology, interpretability, and integration into decision workflows often determine real-world impact more than algorithmic sophistication alone (Rajkomar et al., 2019; Mehrabi et al., 2021).
-
-This systematic review synthesizes empirical and systematic research on real-world ML and DM applications to answer four questions:
-
-1.  Which domains demonstrate the strongest empirical evidence of ML effectiveness?
-
-2.  What methodological patterns recur across domains?
-
-3.  What constraints and failure modes limit real-world deployment?
-
-4.  What trends and gaps define future research directions?
-
-Rather than cataloguing algorithms, this review emphasizes cross-domain synthesis to identify structural determinants of ML’s real-world impact.
-
-------------------------------------------------------------------------
-
-## 2. Methodology
-
-### 2.1 Review Framework
-
-This review follows systematic literature review standards consistent with PRISMA guidelines (Page et al., 2021). The objective was to identify, evaluate, and synthesize empirical studies examining ML and DM applications in operational environments.
-
-### 2.2 Search Strategy
-
-Searches were conducted across major academic databases including:
-
--   Scopus
-
--   IEEE Xplore
-
--   Web of Science
-
--   PubMed
-
--   ACM Digital Library
-
--   ScienceDirect
-
-Search strings combined Boolean operators and keywords:
-
-> (“machine learning” OR “data mining” OR “deep learning”) AND (“real-world applications” OR “deployment” OR “predictive maintenance” OR “credit scoring” OR “fraud detection” OR “medical imaging” OR “traffic prediction” OR “crop yield prediction” OR “education analytics”)
-
-The search window was restricted to peer-reviewed studies published between 2015 and 2025 to reflect contemporary ML deployment contexts.
-
-Initial searches yielded 1,248 records.
-
-------------------------------------------------------------------------
-
-### 2.3 Inclusion and Exclusion Criteria
-
-Studies were included if they:
-
--   Used real-world operational data (e.g., hospital records, financial transactions, industrial sensors)
-
--   Reported empirical performance evaluation (e.g., accuracy, AUC, RMSE, cost reduction)
-
--   Applied ML or data mining to a domain-specific problem
-
--   Were peer-reviewed journal or conference publications
-
-Studies were excluded if they:
-
--   Used only synthetic or benchmark datasets
-
--   Focused purely on algorithmic theory without application
-
--   Lacked empirical evaluation
-
-After screening titles, abstracts, and full texts, 25 high-quality studies were included.
-
-------------------------------------------------------------------------
-
-### 2.4 Quality Assessment
-
-Studies were evaluated based on:
-
--   Data transparency and representativeness
-
--   Validation methodology (cross-validation, temporal validation, external validation)
-
--   Robustness of evaluation metrics
-
--   Discussion of deployment constraints
-
-Only studies demonstrating methodological rigor were included.
-
-------------------------------------------------------------------------
-
-### 2.5 Synthesis Approach
-
-Due to heterogeneity across domains, narrative synthesis was used rather than meta-analysis. Studies were coded according to:
-
--   Domain
-
--   Task type (prediction, anomaly detection, classification, recommendation)
-
--   Data modality (structured, text, image, sensor, multimodal)
-
--   Model class
-
--   Evaluation design
-
--   Deployment constraints
-
-This enabled cross-domain thematic synthesis.
-
-------------------------------------------------------------------------
-
-## 3. Results: Domain-Specific Applications
-
-### 3.1 Healthcare
-
-Healthcare represents one of the most extensively studied ML application domains. ML systems analyze electronic health records (EHRs), medical images, and clinical notes to support diagnosis, prognosis, and resource allocation.
-
-Deep learning has demonstrated exceptional performance in imaging tasks. Litjens et al. (2017) reviewed over 300 studies and found convolutional neural networks outperform traditional image analysis techniques in tasks such as tumor detection and organ segmentation. Battineni et al. (2020) reported diagnostic sensitivity exceeding 95% in diabetic retinopathy detection.
-
-However, generalizability remains a key limitation. Models trained on curated datasets often perform poorly when deployed in hospitals using different imaging protocols or patient populations (Rajkomar et al., 2019). Data quality issues—including missing data, inconsistent coding, and label noise—frequently limit performance gains more than algorithm choice.
-
-Interpretability is another critical constraint. Clinicians must understand model reasoning to trust predictions. Studies comparing interpretable models (e.g., logistic regression, decision trees) with deep neural networks found that clinicians often preferred slightly less accurate interpretable models due to transparency and accountability requirements.
-
-------------------------------------------------------------------------
-
-### 3.2 Finance
-
-ML is widely used in credit scoring, fraud detection, and algorithmic trading.
-
-Gradient boosting and random forests consistently outperform traditional credit scoring methods, improving predictive accuracy by 5–15% (Nazareth and Reddy, 2023; Shi et al., 2022). Fraud detection systems using anomaly detection and ensemble learning reduce fraud losses while improving detection efficiency (Chen et al., 2021).
-
-However, financial ML systems face strict governance requirements. Regulatory frameworks require explainability, fairness, and auditability. As a result, interpretable models or constrained ML models are often preferred despite slightly lower predictive accuracy.
-
-Concept drift presents another major challenge. Fraud patterns and borrower behavior evolve over time, reducing model performance. Studies using temporal validation demonstrate that performance can degrade significantly without continuous retraining.
-
-------------------------------------------------------------------------
-
-### 3.3 Manufacturing and Predictive Maintenance
-
-Predictive maintenance is a major Industry 4.0 application. ML models analyze sensor data to predict equipment failures before they occur.
-
-Jhaveri et al. (2022) reported downtime reductions exceeding 40% using ML-based predictive maintenance systems. Recurrent neural networks effectively capture temporal patterns in sensor data, enabling early detection of failure signals.
-
-Computer vision models also enable automated defect detection, improving quality control accuracy beyond traditional inspection methods.
-
-However, deployment challenges include scarce failure labels, heterogeneous sensor systems, and integration into maintenance workflows.
-
-------------------------------------------------------------------------
-
-### 3.4 Agriculture
-
-ML applications in agriculture focus on crop yield prediction, disease detection, and resource optimization.
-
-Benos et al. (2021) demonstrated that ML models combining satellite imagery, weather data, and soil data improve crop yield prediction accuracy significantly. Precision agriculture systems enable targeted irrigation and fertilization, improving efficiency and sustainability.
-
-However, models often fail to generalize across geographic regions due to differences in climate, soil, and farming practices.
-
-------------------------------------------------------------------------
-
-### 3.5 Transportation
-
-ML improves traffic forecasting, route optimization, and accident prediction.
-
-Spatiotemporal neural networks capture complex traffic patterns and improve prediction accuracy compared to traditional statistical models (Boukerche and Wang, 2020).
-
-Real-time deployment constraints require efficient models capable of low-latency predictions.
-
-------------------------------------------------------------------------
-
-### 3.6 Education
-
-Educational ML systems predict student dropout risk and learning outcomes.
-
-Random forests and gradient boosting models identify at-risk students using behavioral and academic data (Cardona et al., 2023).
-
-However, predictive accuracy alone does not improve outcomes unless predictions are integrated into effective intervention systems.
-
-------------------------------------------------------------------------
-
-### 3.7 Recommender Systems and Digital Platforms
-
-Recommender systems improve user engagement by predicting preferences.
-
-Deep learning models improve recommendation accuracy and user engagement metrics. However, bias, fairness, and feedback loops present significant challenges.
-
-------------------------------------------------------------------------
-
-## 4. Cross-Domain Synthesis
-
-### 4.1 Data Quality as Primary Determinant
-
-Across domains, data quality and feature engineering have greater impact on performance than algorithm selection.
-
-Well-curated datasets allow simpler models to achieve comparable performance to complex deep learning systems.
-
-------------------------------------------------------------------------
-
-### 4.2 Distribution Shift as Major Failure Mode
-
-Distribution shift occurs when training data differs from real-world data.
-
-This problem affects healthcare, finance, and agriculture, reducing model reliability.
-
-Continuous monitoring and retraining are required.
-
-------------------------------------------------------------------------
-
-### 4.3 Interpretability as Deployment Requirement
-
-Interpretability is essential in high-stakes domains.
-
-Models must provide explainable predictions to gain trust and regulatory approval.
-
-------------------------------------------------------------------------
-
-### 4.4 Prediction-to-Decision Gap
-
-Predictive accuracy alone does not guarantee impact.
-
-ML systems must integrate into decision workflows.
-
-------------------------------------------------------------------------
-
-## 5. Trends and Research Gaps
-
-### Trends
-
-Major trends include:
-
--   Growth of deep learning
-
--   Multimodal data integration
-
--   Explainable AI
-
--   Real-time edge ML
-
-### Research Gaps
-
-Major gaps include:
-
--   Limited external validation
-
--   Lack of causal evaluation
-
--   Insufficient monitoring frameworks
-
--   Limited fairness research
-
-------------------------------------------------------------------------
-
-## 6. Proposed Testable Hypothesis
-
-Hypothesis:
-
-ML systems designed for interpretability and decision integration will achieve greater real-world effectiveness than black-box models optimized solely for predictive accuracy.
-
-This can be tested using controlled deployment studies comparing interpretable and black-box models.
-
-------------------------------------------------------------------------
-
-## 7. Conclusion
-
-Machine learning and data mining have achieved substantial success across real-world domains, improving predictive accuracy and operational efficiency. However, real-world impact depends on socio-technical integration, interpretability, and governance rather than predictive accuracy alone.
-
-Future research must focus on reliability, fairness, interpretability, and integration into decision systems.
-
-------------------------------------------------------------------------
-
-## References (Selected)
-
-Battineni et al. (2020)\
-Benos et al. (2021)\
-Boukerche and Wang (2020)\
-Bousdekis et al. (2019)\
-Cardona et al. (2023)\
-Chen et al. (2021)\
-Jhaveri et al. (2022)\
-Litjens et al. (2017)\
-Mehrabi et al. (2021)\
-Nazareth and Reddy (2023)\
-Page et al. (2021)\
-Rajkomar et al. (2019)\
-Rane et al. (2024)\
-Sarker (2021)\
-Shi et al. (2022)
-:::
-
-## Step 5: Reflection
-
-While each AI model approached the literature review using similar methodologies basing the framework off of PRISMA. Each of the AI models focused on different aspects, for example, Grok3 primarily focused heavily on using raw data to explain their methodology while ChatGPT and CoPilot used less statistics and focused more on interpretation. While unique both of these approaches would benefit strongly if used for preliminary research or broad brainstorming purposes. I found that adding requirements at the end of a prompt helps to refine the results to what you are looking for, you are able to add short bullet points on how you expect the outcome to look like and what specific attributes you are looking for. This was especially useful when you are looking to make small adjustments to how the AI model is displaying their findings, for example, Grok3's model was focused on statistics and using data from case studies for their methodology by making a requirement to focus on interpretation and "storytelling" it helps for the model to adjust the language. I learned that when properly guided using clear instructions AI models are very effective at organizing information. Using multiple models allows you to leverage each of their strengths and combine them to get the output that you are looking for. These models are especially useful for structuring and overall synthesis, however, is not accurate for a academic judgement. For example, there must be human input for evaluating accuracy and critically interpreting findings.
+```
