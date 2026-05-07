@@ -15,7 +15,7 @@ website:
           - href: Assignment2.qmd
             text: Assignment2
           - href: Assignment3.qmd
-            text: assignment3
+            text: assignments3
       - href: projects.qmd
         text: Projects
       - text: Participation 
