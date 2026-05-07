@@ -5,11 +5,9 @@ format:
     css: styles.css
 ---
 
+# Assignment 3
 
-## Assignment 3
-
-::: {.border}
-
+::: border
 **User**
 
 Conducting a linear regression returns this graph, provide alternative methods to improve the prediction capabilities. x is age, income, education and y is votes.
@@ -25,10 +23,1167 @@ Interpret a Logistic Regression, what does the output represent?
 **Assistant**
 
 Logistic regression models the probability that an outcome equals 1. The coefficients represent changes in log-odds, not direct changes in probability. Positive coefficients increase the likelihood of voting, while negative coefficients decrease it. Exponentiating coefficients gives odds ratios.
-
 :::
 
-## Assignment 4
+# Assignment 4
 
+# Project - Author and State Partisanship AI logs
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
+## Initial Prompt
+
+I am a master’s student. This project is part of a larger research effort focused on analyzing U.S. state-level AI legislation and identifying factors associated with AI bill development and enactment.
+
+My specific responsibility in the project is data annotation and enrichment, particularly gathering and validating:
+
+-   bill authors
+-   author partisanship
+-   state partisanship
+-   related metadata fields connected to AI legislation records
+
+------------------------------------------------------------------------
+
+## AI Role
+
+You should act as an AI research and coding assistant
+
+Your role is to assist with:
+
+-   R programming support
+-   debugging code
+-   suggesting packages and workflows
+-   helping structure data pipelines
+-   explaining APIs and scraping methods
+-   proposing validation strategies
+-   helping document the workflow for reproducibility
+
+You should avoid fabricating information or hallucinating legislative details. If information cannot be verified from the available text, URLs, or metadata, explicitly return `"N/A"` or explain uncertainty.
+
+------------------------------------------------------------------------
+
+## Expected Project Workflow
+
+The project:
+
+1.  reading and cleaning legislative datasets
+2.  extracting bill authors from legislative URLs
+3.  annotating author party affiliation
+4.  merging state-level partisan control data
+5.  validating annotations
+6.  exporting a final clean structured dataset
+
+------------------------------------------------------------------------
+
+## Coding Expectations
+
+Most coding should be written in R using tidyverse-style workflows unless otherwise specified.
+
+When suggesting code:
+
+-   explain the purpose of each major step
+-   prefer modular and reproducible pipelines
+-   include debugging suggestions where appropriate
+-   avoid unnecessary complexity
+
+# AI Collaboration Timeline
+
+## Initial Data Annotation Planning
+
+## User Prompt
+
+> AI legislation data from NCSL and need to annotate state partisanship and author partisanship. I already have the legislation dataset and a separate state partisan control file.
+>
+> Read Excel + CSV files - clean state names - extract the bill introduction year - merge state partisan control by year
+>
+> What R packages should I include
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Suggested R packages:
+
+``` r
+install.packages(c(
+  "readxl",
+  "readr",
+  "dplyr",
+  "stringr",
+  "writexl"
+))
+```
+
+Explanation provided:
+
+-   `readxl` → read Excel files
+-   `readr` → import CSV files
+-   `dplyr` → joins and transformations
+-   `stringr` → text parsing
+-   `writexl` → export annotated spreadsheets
+
+Additional guidance:
+
+-   Keep state labels standardized before merging
+-   Extract bill year before assigning state partisan control
+-   Match by bill introduction year rather than final action year
+-   Validate unmatched states after the merge
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> I started setting up the workflow and this is what I currently have:
+
+``` r
+library(readxl)
+library(readr)
+library(dplyr)
+library(stringr)
+library(writexl)
+
+setwd("/Users/patrickheldebrandt/Desktop/Knowledge_Mining_R")
+
+bills <- read_excel("us_ai_legislation_ncsl_meta 1.xls")
+state_lookup <- read_csv("state_partisan_control_2025-2024.csv")
+```
+
+> I also have a column called `introduced_year_month`.
+>
+> I want to extract just the year and merge the correct partisan control column depending on whether the bill was introduced in 2024 or 2025.
+>
+> Is `mutate()` + `str_sub()` the correct approach here?
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Suggested using `mutate()` with `str_sub()`:
+
+``` r
+bills <- bills %>%
+  mutate(
+    bill_year = str_sub(as.character(introduced_year_month), 1, 4)
+  )
+```
+
+The response also explained:
+
+-   convert the field to character first
+-   extract the first four digits as the year
+-   use the extracted year to determine which partisan control column should be assigned
+
+Additional recommendation:
+
+``` r
+unique(bills$bill_year)
+```
+
+to validate that the extraction worked correctly before merging.
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> My plan is:
+>
+> -   merge by state
+> -   then assign either `state_control_2024` or `state_control_2025`
+> -   create one final `state_partisanship` column
+>
+> I drafted this:
+
+``` r
+bills <- bills %>%
+  left_join(state_lookup, by = "state")
+```
+
+> After the merge, what should I use to build the unified partisanship column?
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Suggested workflow:
+
+``` r
+bills <- bills %>%
+  mutate(
+    state_partisanship = case_when(
+      bill_year == "2024" ~ state_control_2024,
+      bill_year == "2025" ~ state_control_2025,
+      TRUE ~ NA_character_
+    )
+  )
+```
+
+Additional guidance included:
+
+-   verify that state names match before merging
+-   check for unmatched rows after the join
+-   standardize capitalization if needed
+-   manually inspect any `NA` values after assignment
+
+The AI also suggested checking merge quality with:
+
+``` r
+table(bills$state_partisanship, useNA = "ifany")
+```
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Notes
+
+-   I reviewed Democratic/Republican labels manually, confirmed merge output before exporting the final annotated files
+
+The AI primarily assisted with:
+
+Package recommendations, workflow structure, and debugging suggestions
+
+# State Partisanship
+
+## User Prompt
+
+> The state partisan information comes from NCSL state partisan composition. I need to merge year-specific partisan control into the legislation dataset.
+>
+> My current plan is to:
+>
+> 1.  Read in the AI legislation dataset
+> 2.  Read in the NCSL state partisan control file
+> 3.  Extract the year from `introduced_year_month`
+> 4.  Use that year to assign the correct state partisan control value
+> 5.  Create one standardized `state_partisanship` column
+>
+> Does this pipeline make sense, and how should I structure the R code?
+
+------------------------------------------------------------------------
+
+## AI Response
+
+The workflow makes sense. Since the partisan control information is year-specific, the key step is extracting the bill introduction year before assigning the state partisan control value.
+
+Suggested workflow:
+
+1.  Read both files
+2.  Extract bill introduction year
+3.  Merge the bill dataset with the state partisan control file
+4.  Use the extracted year to select the correct partisan control column
+5.  Create a unified `state_partisanship` column
+6.  Validate unmatched or missing rows
+
+Example setup:
+
+``` r
+install.packages(c("readxl", "readr", "dplyr", "stringr", "writexl"))
+
+library(readxl)
+library(readr)
+library(dplyr)
+library(stringr)
+library(writexl)
+
+setwd("/Users/patrickheldebrandt/Desktop/Knowledge_Mining_R")
+```
+
+Read in the data:
+
+``` r
+bills <- read_excel("us_ai_legislation_ncsl_meta 1.xls")
+state_lookup <- read_csv("state_partisan_control_2025-2024.csv")
+```
+
+Extract the bill introduction year:
+
+``` r
+bills <- bills %>%
+  mutate(
+    bill_year = str_sub(as.character(introduced_year_month), 1, 4)
+  )
+```
+
+Check that the year extraction worked:
+
+``` r
+unique(bills$bill_year)
+```
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> I extracted the year from `introduced_year_month`. Since the state partisan file has separate columns for 2024 and 2025, Should merge by state first, then use the year to choose the right column.
+>
+> Would this be the correct structure?
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Yes. A reasonable approach is to merge the state-level lookup file into the bill-level data by `state`, then create a single `state_partisanship` column using `case_when()`.
+
+``` r
+bills <- bills %>%
+  left_join(state_lookup, by = "state") %>%
+  mutate(
+    state_partisanship = case_when(
+      bill_year == "2024" ~ state_control_2024,
+      bill_year == "2025" ~ state_control_2025,
+      TRUE ~ NA_character_
+    )
+  )
+```
+
+This keeps the final dataset easier to use because downstream analysis only needs one column: `state_partisanship`.
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> I want to make sure this did not merge incorrectly. What validation checks should I run?
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Suggested validation checks:
+
+``` r
+table(bills$bill_year, useNA = "ifany")
+```
+
+``` r
+table(bills$state_partisanship, useNA = "ifany")
+```
+
+``` r
+bills %>%
+  filter(is.na(state_partisanship)) %>%
+  select(state, introduced_year_month, bill_year, state_partisanship)
+```
+
+These checks help identify:
+
+-   missing year values
+-   states that did not merge correctly
+-   bills with no assigned partisan control
+-   unexpected values in the final `state_partisanship` column
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> I manually checked the state labels and the unmatched rows after the merge. Some state names needed to be standardized before the join worked correctly.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+That is the right validation step. Before relying on the merged output, state names should be standardized across both files. After cleaning state labels, rerun the join and repeat the validation checks.
+
+Suggested export after validation:
+
+``` r
+write_xlsx(
+  bills,
+  "us_ai_legislation_with_state_partisanship.xlsx"
+)
+```
+
+------------------------------------------------------------------------
+
+## Notes
+
+I manually verified:
+
+-   year extraction from `introduced_year_month`
+-   consistency of state names across files
+-   Democratic/Republican state control labels
+-   unmatched or missing rows after creating `state_partisanship`
+
+The AI assisted with:
+
+Structuring the R pipeline
+
+-   suggesting tools, recommending validation checks
+
+# Author Extraction Strategy
+
+## User Prompt
+
+> Extract bill authors from the bill_URL field. Some legislative pages contain labels like:
+>
+> -   `Author:`
+> -   `Sponsor:`
+> -   `Introduced by`
+>
+> I want to scrape the author names directly from the bill pages in R.
+>
+> My goal is to:
+>
+> 1.  open each bill URL
+> 2.  scrape the visible page text
+> 3.  search for author-related patterns
+> 4.  extract only the author name
+> 5.  return N/A when the author cannot be reliably identified
+>
+> What packages and workflow would make the most sense for this?
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Recommended packages:
+
+``` r
+install.packages(c(
+  "rvest",
+  "httr",
+  "xml2",
+  "stringr",
+  "dplyr",
+  "purrr"
+))
+```
+
+Suggested package purposes:
+
+-   `rvest` → scrape webpage content
+-   `httr` → handle requests and URL access
+-   `xml2` → parse HTML
+-   `stringr` → pattern matching and text extraction
+-   `dplyr` → workflow structure
+-   `purrr` → iterate across URLs
+
+Suggested workflow:
+
+1.  Open bill URL
+2.  Scrape visible page text
+3.  Search for patterns:
+    -   `"Author:"`
+    -   `"Sponsor:"`
+    -   `"Introduced by"`
+4.  Extract author name using regex
+5.  Return `"N/A"` if no reliable match exists
+
+Validation recommendation:
+
+-   do not hallucinate author names
+-   avoid guessing based on partial matches
+-   return `"N/A"` when confidence is low
+-   manually review failed or ambiguous extractions
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> I started building the scraping workflow and currently have this setup:
+
+``` r
+library(rvest)
+library(httr)
+library(xml2)
+library(stringr)
+library(dplyr)
+library(purrr)
+
+extract_author <- function(url) {
+
+  page <- read_html(url)
+
+  text <- page %>%
+    html_text()
+
+}
+```
+
+> I think I now need to search the page text for patterns like "Author" or "Introduced by:".
+>
+> Would `str_extract()` be the best approach here?
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Yes. A reasonable approach is to use `str_extract()` after converting the page content into plain text.
+
+Suggested structure:
+
+``` r
+author <- str_extract(
+  text,
+  "(?i)(Author:|Sponsor:|Introduced by).*"
+)
+```
+
+The response also suggested:
+
+-   using case-insensitive matching (`(?i)`)
+-   limiting extraction to the relevant line only
+-   cleaning whitespace after extraction
+-   returning `"N/A"` if no match exists
+
+Example fallback logic:
+
+``` r
+if (is.na(author)) {
+  author <- "N/A"
+}
+```
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> Some pages return a lot of extra legislative text after the sponsor name.
+>
+> I only want the actual author portion, not the entire bill header.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Suggested refinement:
+
+-   narrow the regex pattern
+-   stop extraction after the first match
+-   clean extra legislative text after extraction
+
+Example guidance included:
+
+``` r
+str_trim()
+```
+
+and separating:
+
+-   sponsor prefixes
+-   legislative boilerplate
+-   surrounding metadata
+
+The AI also suggested manually reviewing sampled outputs before running the full dataset.
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> Some pages do not contain clear author labels, and a few pages fail to load entirely.
+>
+> I do not want to force incorrect author assignments.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Recommended approach:
+
+-   if the page cannot be scraped reliably → return `"N/A"`
+-   if no author-related pattern exists → return `"N/A"`
+-   avoid inferring names from unrelated legislative text
+-   keep failed rows for later manual review or secondary lookup methods
+
+The AI also suggested storing unresolved rows separately for validation.
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> I manually checked a sample of the extracted authors after running the scraper.
+>
+> Some malformed names and partial matches needed additional cleaning before export.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+That is the correct validation step. Legislative websites are inconsistent across states, so manual quality checks are important before using the extracted author field downstream.
+
+Suggested final export:
+
+``` r
+write_xlsx(
+  bills,
+  "us_ai_legislation_with_authors.xlsx"
+)
+```
+
+------------------------------------------------------------------------
+
+## Notes
+
+I manually checked extraction quality on sampled bills and corrected malformed names.
+
+-   reviewing failed extractions
+-   removing extra legislative text from author fields
+-   `"N/A"` values when authors could not be reliably identified
+
+The AI primarily assisted with:
+
+Scraping workflow structure, package recommendations, regex suggestions, and debugging scraping logic
+
+# LegiScan API
+
+## User Prompt
+
+> Some bill pages are difficult to scrape because author information is hidden behind links or not clearly listed in the visible page text.
+>
+> Would using the LegiScan API help fill in missing author values?
+>
+> I do not want the code to hallucinate authors. If the API or scraper cannot verify the author, it should return `N/A`.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Using LegiScan could help as a supplemental source, especially for rows where the direct URL scraping does not find a clear author or sponsor field.
+
+Suggested hybrid workflow:
+
+1.  Try direct scraping from the `bill_url`
+2.  If direct scraping fails, query LegiScan as a fallback
+3.  If LegiScan returns useful bill metadata, use it to fill missing author values
+4.  If LegiScan does not return a match, try scraping linked pages from the original URL
+5.  If the author is still unclear, return `"N/A"`
+
+The AI also warned:
+
+-   LegiScan matching may fail for some URLs
+-   state legislative websites are formatted inconsistently
+-   some author information may be hidden in linked pages
+-   API results should still be manually validated
+-   the API should supplement the workflow, not replace human review
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> I want to use LegiScan only for rows where the author is missing after scraping.
+>
+> The main author column should not be overwritten if the scraper already found something reliable.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+That is a safer structure. Keep the direct scraping result first, then only use LegiScan for unresolved rows.
+
+Suggested logic:
+
+``` r
+bills_missing_author <- bills %>%
+  filter(is.na(author) | author == "N/A" | author == "")
+```
+
+Then apply the fallback only to those rows.
+
+Suggested merge-back idea:
+
+``` r
+bills <- bills %>%
+  mutate(
+    author_final = case_when(
+      !is.na(author) & author != "" & author != "N/A" ~ author,
+      !is.na(legiscan_author) & legiscan_author != "" ~ legiscan_author,
+      TRUE ~ "N/A"
+    )
+  )
+```
+
+This protects previously extracted author values and only fills missing cases when a fallback result exists.
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> Some LegiScan attempts are returning `N/A`. Should I still keep those rows?
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Yes. Keep unresolved rows as `N/A` rather than forcing a match.
+
+Recommended reasoning:
+
+-   `N/A` is better than an unverified author
+-   unresolved rows can be manually reviewed later
+-   this makes the annotation process transparent
+-   it avoids introducing hallucinated or incorrect metadata
+
+Suggested validation check:
+
+``` r
+table(bills$author_final, useNA = "ifany")
+```
+
+And to inspect unresolved rows:
+
+``` r
+bills %>%
+  filter(author_final == "N/A") %>%
+  select(state, bill_url, author, legiscan_author, author_final)
+```
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> I also noticed that some pages require following another link from the original bill page to reach the author information.
+>
+> Is there a way to make the scraper check linked pages too?
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Yes, but it should be treated as a fallback step because following every link can introduce noise.
+
+Suggested approach:
+
+1.  scrape the original `bill_url`
+2.  extract links from the page
+3.  check only relevant linked pages
+4.  search those linked pages for author/sponsor patterns
+5.  return `"N/A"` if no reliable author is found
+
+The AI cautioned:
+
+-   do not search unrelated links too broadly
+-   avoid pulling names from unrelated page sections
+-   keep manual validation for linked-page results
+-   use conservative matching rules
+
+------------------------------------------------------------------------
+
+## Notes
+
+I used LegiScan only as a supplemental lookup tool rather than the primary source.
+
+-   checked rows where direct scraping failed
+-   reviewing LegiScan-filled author values
+-   preserving `N/A` where no reliable author was found
+-   checking whether linked pages actually contained sponsor information
+-   avoiding forced matches from incomplete API results
+
+The AI assisted with:
+
+Designing the fallback structure
+
+# Finding Authors
+
+## User Prompt
+
+> The extraction is returning values like:
+>
+> `Introduced by Sen. GIANARIS`
+>
+> and sometimes:
+>
+> `Introduced by Sens. WEBB, COMRIE, RAMOS`
+>
+> I only want the actual author names.
+>
+> I want the code to remove legislative titles like `Sen.` or `Sens.` but preserve the actual names. If there are multiple authors, I want all names kept rather than only the first one.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+The issue is that the scraper is correctly finding the author section, but the extracted string still includes legislative prefixes and surrounding text.
+
+Suggested cleaning strategy:
+
+-   remove prefixes such as:
+    -   `Introduced by`
+    -   `Sen.`
+    -   `Sens.`
+    -   `Assembly Member`
+    -   `Representative`
+-   preserve multiple author names when listed
+-   avoid deleting committee names
+-   trim extra whitespace after cleaning
+
+Example cleaning function:
+
+``` r
+clean_author <- function(author_text) {
+  
+  if (is.na(author_text) || author_text == "" || author_text == "N/A") {
+    return("N/A")
+  }
+  
+  author_clean <- author_text %>%
+    str_remove(regex("(?i)^Introduced by\\s+")) %>%
+    str_remove_all(regex("(?i)\\bSen\\.\\s*")) %>%
+    str_remove_all(regex("(?i)\\bSens\\.\\s*")) %>%
+    str_remove_all(regex("(?i)\\bAssembly Member\\s+")) %>%
+    str_remove_all(regex("(?i)\\bRepresentative\\s+")) %>%
+    str_squish()
+  
+  if (author_clean == "") {
+    return("N/A")
+  }
+  
+  return(author_clean)
+}
+```
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> Extracted values are still too long because the scraper captures text after the author names.
+>
+> I want it to stop after the author section and avoid including the rest of the bill header.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Suggested adding a trimming step after the initial author extraction.
+
+The AI suggested cleaning after known stopping points rather than allowing the full legislative header to remain.
+
+Example approach:
+
+``` r
+clean_author <- function(author_text) {
+  
+  if (is.na(author_text) || author_text == "" || author_text == "N/A") {
+    return("N/A")
+  }
+  
+  author_clean <- author_text %>%
+    str_remove(regex("(?i)^Introduced by\\s+")) %>%
+    str_remove_all(regex("(?i)\\bSen\\.\\s*")) %>%
+    str_remove_all(regex("(?i)\\bSens\\.\\s*")) %>%
+    str_remove_all(regex("(?i)\\bAssembly Member\\s+")) %>%
+    str_remove_all(regex("(?i)\\bRepresentative\\s+")) %>%
+    str_replace(regex("(?i)\\s+(An act|A bill|Relating to|Version:|Date:).*"), "") %>%
+    str_squish()
+  
+  if (author_clean == "") {
+    return("N/A")
+  }
+  
+  return(author_clean)
+}
+```
+
+Explanation:
+
+-   `str_replace()` removes extra bill text after common legislative text markers
+-   `str_squish()` removes repeated spaces
+-   the function still returns `N/A` if cleaning leaves no usable author value
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> For multiple authors like `WEBB, COMRIE, RAMOS`, I want the code to keep all of them.
+>
+> I do not want it to only return `WEBB`.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+The cleaning function should not split on commas unless you specifically want separate rows. If the goal is to keep all listed authors in one field, preserve the comma-separated text.
+
+Recommended approach:
+
+``` r
+bills <- bills %>%
+  mutate(
+    author_clean = sapply(author, clean_author)
+  )
+```
+
+This keeps values like:
+
+``` text
+WEBB, COMRIE, RAMOS
+```
+
+rather than truncating them to the first name.
+
+The AI also suggested reviewing multi-author rows with:
+
+``` r
+bills %>%
+  filter(str_detect(author_clean, ",")) %>%
+  select(author, author_clean)
+```
+
+------------------------------------------------------------------------
+
+## User Follow-Up
+
+> Some entries are committees, and I do not want the cleaning function to accidentally shorten them.
+
+------------------------------------------------------------------------
+
+## AI Response
+
+Committee names should be handled conservatively. If the author text contains a committee phrase, preserve the full institutional name instead of trying to force it into a first-name/last-name structure.
+
+Suggested committee check:
+
+``` r
+clean_author <- function(author_text) {
+  
+  if (is.na(author_text) || author_text == "" || author_text == "N/A") {
+    return("N/A")
+  }
+  
+  if (str_detect(author_text, regex("committee", ignore_case = TRUE))) {
+    return(str_squish(author_text))
+  }
+  
+  author_clean <- author_text %>%
+    str_remove(regex("(?i)^Introduced by\\s+")) %>%
+    str_remove_all(regex("(?i)\\bSen\\.\\s*")) %>%
+    str_remove_all(regex("(?i)\\bSens\\.\\s*")) %>%
+    str_remove_all(regex("(?i)\\bAssembly Member\\s+")) %>%
+    str_remove_all(regex("(?i)\\bRepresentative\\s+")) %>%
+    str_replace(regex("(?i)\\s+(An act|A bill|Relating to|Version:|Date:).*"), "") %>%
+    str_squish()
+  
+  if (author_clean == "") {
+    return("N/A")
+  }
+  
+  return(author_clean)
+}
+```
+
+The AI cautioned that committee names should be manually reviewed because they do not follow the same structure as individual sponsor names.
+
+------------------------------------------------------------------------
+
+## Notes
+
+-   committee-based authors
+-   multiple authors listed in one field
+-   abbreviated sponsor titles like `Sen.` and `Sens.`
+-   extracted values that contained extra legislative text
+-   rows where the author was still unresolved and should remain `N/A`
+
+The AI assisted with:
+
+-   regex cleaning suggestions
+-   preserving multiple authors
+-   recommending manual checks for committee names
+
+# Cleaning Author Column
+
+## User Prompt
+
+> Some rows contain committee names like:
+>
+> “Joint Committee on General Law”
+>
+> The current extraction only returns “joint.”
+
+### AI Response
+
+Suggested modification:
+
+-   Preserve full committee names
+-   Do not truncate institutional authors
+-   Differentiate:
+    -   individual sponsors
+    -   committees
+    -   offices
+
+Additional recommendation:
+
+-   Store committee entities as written
+-   Avoid forcing individual-name parsing on committees
+
+### Notes
+
+I manually reviewed institutional entities before export.
+
+------------------------------------------------------------------------
+
+# Author Partisanship Annotation
+
+## User Prompt
+
+> I now need to create a new column that annotates author partisanship.
+
+### AI Response
+
+Suggested categories:
+
+-   Democrat
+-   Republican
+-   Bipartisan
+-   Independent
+-   N/A
+
+Logic discussed:
+
+-   If sponsors include both parties → Bipartisan
+-   If a party tag appears like `(R)` → Republican
+-   If `(D)` → Democrat
+-   Return `N/A` if unverifiable
+
+Example parsing approach:
+
+``` r
+str_detect()
+```
+
+The AI also suggested:
+
+-   standardizing labels before export
+-   creating a dedicated `author_partisanship` column
+
+### Notes
+
+I manually reviewed:
+
+-   bipartisan cases
+-   committee authors
+-   ambiguous sponsor labels
+
+------------------------------------------------------------------------
+
+# Author Cleanup
+
+## User Prompt
+
+> Some legislative pages only provide the author’s last name. How should this be handled before assigning partisanship?
+
+### AI Response
+
+Suggested workflow:
+
+1.  Attempt full-name lookup
+2.  Validate against legislative records
+3.  Only assign party after confirmation
+4.  Otherwise return `N/A`
+
+Additional recommendation:
+
+-   Keep this as a validation branch rather than a separate annotation pipeline
+
+### Notes
+
+I manually verified uncertain authors before assigning party labels.
+
+------------------------------------------------------------------------
+
+# Excel Export Errors
+
+## User Prompt
+
+> I received this error:
+>
+> `Error in libxlsxwriter: String exceeds Excel's limit of 32,767 characters.`
+
+### AI Response
+
+The AI explained:
+
+-   Some scraped text fields were too large for Excel cells
+-   Long page text should not be stored directly
+-   Cleaned extraction outputs should be exported instead
+
+Suggested fixes:
+
+-   truncate long text
+-   remove raw HTML
+-   store only extracted author fields
+
+### Notes
+
+I cleaned oversized outputs before exporting final spreadsheets.
+
+------------------------------------------------------------------------
+
+# Reconstructed Debugging Log
+
+## Example 1 — Missing Excel Sheet
+
+### User Prompt
+
+> Error: Sheet 'in' not found
+
+### AI Response
+
+Suggested debugging steps:
+
+``` r
+excel_sheets("us_ai_legislation_ncsl_meta 1.xls")
+```
+
+Explanation:
+
+-   Verify available sheet names before reading
+-   Some imports used incorrect sheet references
+
+------------------------------------------------------------------------
+
+## Example 2 — URL Access Problems
+
+### User Prompt
+
+> The script says it cannot open any URLs even though they are public.
+
+### AI Response
+
+Possible causes discussed:
+
+-   anti-bot protections
+-   redirects
+-   malformed URLs
+-   missing user-agent headers
+
+Suggested using:
+
+``` r
+httr::GET()
+```
+
+with custom headers.
+
+------------------------------------------------------------------------
+
+## Example 3 — Over-Scraping Legislative Text
+
+### User Prompt
+
+> The output is including the entire legislative header instead of just the author.
+
+### AI Response
+
+Suggested:
+
+-   narrowing regex patterns
+-   stopping extraction after first match
+-   cleaning legislative boilerplate text
+
+------------------------------------------------------------------------
+
+# Relation to Course AI Policy
+
+AI was used as:
+
+-   a coding assistant
+-   a debugging collaborator
+-   a workflow design partner
+-   a research support tool
+
+The project followed the course emphasis on:
+
+-   AI-assisted coding
+-   documented AI collaboration
+-   evaluation of hallucination risk
+
+\*This was created by by prompting AI to recreate previous prompts and responses at the end of the chat, causing some chats to be summarized but not hallucinated, however, expresses ths main points of the conversation.\*
