@@ -2,4 +2,111 @@
 title: "Assignment 4"
 ---
 
-## 
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+packageneeded <- c(
+  "quanteda",
+  "quanteda.textstats",
+  "quanteda.textplots",
+  "tidyverse"
+)
+
+new_packages <- packageneeded[
+  !packageneeded %in% installed.packages()[, "Package"]
+]
+
+if (length(new_packages)) {
+  install.packages(new_packages, dependencies = TRUE)
+}
+
+library(quanteda)
+library(quanteda.textstats)
+library(quanteda.textplots)
+library(tidyverse)
+
+corp_inaug <- ("Users/patrickheldebrandt/Desktop/EPPS6323/USDOD")
+
+summary(corp_inaug, 5)
+
+table(corp_inaug$Party)
+table(corp_inaug$Year)
+
+corp_inaug$period <- case_when(
+  corp_inaug$Year < 1900 ~ "Pre_1900",
+  corp_inaug$Year >= 1900 ~ "Post_1900",
+  TRUE ~ NA_character_
+)
+
+table(corp_inaug$period)
+
+toks_inaug <- tokens(
+  corp_inaug,
+  remove_punct = TRUE,
+  remove_numbers = TRUE
+) %>%
+  tokens_remove(stopwords("english"))
+
+dfmat_inaug <- dfm(toks_inaug)
+
+cat("DFM dimensions:", dim(dfmat_inaug), "\n")
+cat("Documents:", ndoc(dfmat_inaug), "| Features:", nfeat(dfmat_inaug), "\n")
+
+toks_inaug <- tokens(
+  corp_inaug,
+  remove_punct = TRUE,
+  remove_numbers = TRUE
+) %>%
+  tokens_remove(stopwords("english"))
+
+dfmat_inaug <- dfm(toks_inaug)
+
+cat("DFM dimensions:", dim(dfmat_inaug), "\n")
+cat("Documents:", ndoc(dfmat_inaug), "| Features:", nfeat(dfmat_inaug), "\n")
+
+topfeat <- topfeatures(dfmat_inaug, 30)
+
+data.frame(
+  feature = names(topfeat),
+  freq = topfeat
+) %>%
+  ggplot(aes(x = reorder(feature, freq), y = freq)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Top 30 Features across U.S. Presidential Inaugural Speeches",
+    x = NULL,
+    y = "Frequency"
+  ) +
+  theme_bw(base_size = 14)
+
+textplot_wordcloud(
+  dfmat_inaug,
+  max_words = 100
+)
+
+dfmat_party <- dfm_subset(
+  dfmat_inaug,
+  Party %in% c("Democratic", "Republican")
+)
+
+dfmat_party_grouped <- dfm_group(
+  dfmat_party,
+  groups = dfmat_party$Party
+)
+
+tstat_party_key <- textstat_keyness(
+  dfmat_party_grouped,
+  target = "Democratic"
+)
+
+textplot_keyness(tstat_party_key, n = 20) +
+  labs(
+    title = "Keyness: Democratic vs. Republican Inaugural Speeches",
+    subtitle = "Words more associated with Democratic speeches compared to Republican speeches"
+  ) +
+  theme_bw(base_size = 14)
+
+```

@@ -15,7 +15,6 @@ library(GGally)
 ## Step 3
 
 TEDS_2016 <- read_stata("https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true")
-summary(TEDS_2016)
 
 ## Step 4
 
