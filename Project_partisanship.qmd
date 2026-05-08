@@ -1,0 +1,419 @@
+---
+title: "Partisanship"
+---
+
+# Data Cleaning
+
+## Enactment Status - outcome variable
+
+``` r
+
+install.packages("readxl")
+install.packages("readr")
+install.packages("dplyr")
+install.packages("stringr")
+install.packages("writexl")
+
+library(readxl)
+library(readr)
+library(dplyr)
+library(stringr)
+library(writexl)
+
+# Read the files
+setwd("/Users/patrickheldebrandt/Desktop/Knowledge_Mining_R")
+enactment <- read_excel("ai_definitions_extracted_with_covars (1).xlsx", sheet = "in")
+
+#
+enactment <- enactment %>%
+  mutate(
+    status = str_trim(status),
+    adopted = if_else(
+      str_starts(status,"Enacted") |
+      str_starts(status, "Adopted"),
+      1,
+      0
+    )
+  )
+
+write_xlsx(enactment, "ai_definitions_extracted_with_DV.xlsx")
+```
+
+## State Partisanship
+
+``` r
+
+install.packages("readxl")
+install.packages("readr")
+install.packages("dplyr")
+install.packages("stringr")
+install.packages("writexl")
+
+library(readxl)
+library(readr)
+library(dplyr)
+library(stringr)
+library(writexl)
+
+
+setwd("/Users/patrickheldebrandt/Desktop/Knowledge_Mining_R")
+bills <- read_excel("us_ai_legislation_ncsl_meta 1.xls", sheet = "us_ai_legislation_ncsl_meta 1")
+state_lookup <- read_csv("state_partisan_control_2025-2024.csv")
+
+
+# 2. Extract year
+bills <- bills %>%
+  mutate(
+    bill_year = str_sub(as.character(year), 1, 4)
+  )
+
+
+bills <- bills %>%
+  left_join(state_lookup, by = "state") %>%
+  mutate(
+    state_partisanship = case_when(
+      bill_year == "2023" ~ state_control_2023,
+      bill_year == "2024" ~ state_control_2024,
+      bill_year == "2025" ~ state_control_2025,
+      TRUE ~ NA_character_
+    )
+  )
+
+# standarize
+bills <- bills %>%
+  mutate(
+    state_partisanship = case_when(
+      state_partisanship == "Rep" ~ "Republican",
+      state_partisanship == "Dem" ~ "Democrat",
+      state_partisanship == "Divided" ~ "Divided",
+      TRUE ~ state_partisanship
+    )
+  )
+
+# remove lookup column
+bills <- bills %>%
+  select(
+    everything(),
+    -leg_control_2023, -gov_party_2023, -state_control_2023,
+    -leg_control_2025, -gov_party_2025, -state_control_2025,
+    -leg_control_2024, -gov_party_2024, -state_control_2024
+  )
+
+# Export
+write_xlsx(bills, "ai_definitions_with_state_partisanship.xlsx")
+write_csv(bills, "ai_definitions_with_state_partisanship.csv")
+
+table(bills$bill_year, useNA = "ifany")
+table(bills$state_partisanship, useNA = "ifany")
+sum(is.na(bills$state_partisanship))
+
+bills %>%
+  select(state, year, bill_year, state_partisanship) %>%
+  head(20)
+```
+
+## Author Partisanship using Legiscan API
+
+``` r
+
+install.packages(c(
+  "readxl", "writexl", "dplyr", "stringr",
+  "purrr", "httr", "jsonlite", "tibble"
+))
+
+library(readxl)
+library(writexl)
+library(dplyr)
+library(stringr)
+library(purrr)
+library(httr)
+library(jsonlite)
+library(tibble)
+
+
+setwd("/Users/patrickheldebrandt/Desktop/Knowledge_Mining_R")
+
+input_file  <- "Book5.xlsx"
+output_file <- "us_ai_legislation_with_authors_legiscan.xlsx"
+
+LEGISCAN_KEY <- "2ecd4e5a2ec496148bddf44f58177237"
+
+
+bills <- read_excel(input_file)
+
+if (!"author" %in% names(bills)) {
+  bills$author <- NA_character_
+}
+
+# Clean
+
+bills <- bills %>%
+  mutate(
+    author = as.character(author),
+    year = as.integer(year),
+    
+    bill_id_original = as.character(bill_id),
+    
+    state_abbr = str_extract(str_to_upper(bill_id_original), "^[A-Z]{2}"),
+    
+    bill_part = str_trim(str_replace(str_to_upper(bill_id_original), "^[A-Z]{2}\\s*", "")),
+    
+    bill_prefix = str_extract(bill_part, "^[A-Z]+"),
+    
+    bill_digits = str_extract(bill_part, "[0-9]+"),
+    
+    # LegiScan format
+    bill_number = case_when(
+      bill_prefix == "H" ~ paste0("HB", bill_digits),
+      bill_prefix == "S" ~ paste0("SB", bill_digits),
+      bill_prefix == "A" ~ paste0("AB", bill_digits),
+      TRUE ~ paste0(bill_prefix, bill_digits)
+    )
+  )
+
+###
+`%||%` <- function(x, y) {
+  if (is.null(x)) y else x
+}
+
+legiscan_get <- function(params) {
+  response <- tryCatch(
+    GET(
+      "https://api.legiscan.com/",
+      query = c(key = LEGISCAN_KEY, params)
+    ),
+    error = function(e) NULL
+  )
+  
+  if (is.null(response) || http_error(response)) {
+    return(NULL)
+  }
+  
+  txt <- content(response, as = "text", encoding = "UTF-8")
+  
+  out <- tryCatch(
+    fromJSON(txt, simplifyVector = FALSE),
+    error = function(e) NULL
+  )
+  
+  Sys.sleep(0.5)
+  out
+}
+###
+
+
+get_sessions_for_state <- function(state_abbr) {
+  res <- legiscan_get(list(
+    op = "getSessionList",
+    state = state_abbr
+  ))
+  
+  if (is.null(res) || is.null(res$sessions)) {
+    return(tibble())
+  }
+  
+  map_dfr(res$sessions, function(x) {
+    tibble(
+      session_id = x$session_id %||% NA_integer_,
+      year_start = x$year_start %||% NA_integer_,
+      year_end = x$year_end %||% NA_integer_,
+      special = x$special %||% NA_integer_,
+      session_name = x$session_name %||% NA_character_
+    )
+  })
+}
+
+
+get_master_list <- function(session_id) {
+  res <- legiscan_get(list(
+    op = "getMasterList",
+    id = session_id
+  ))
+  
+  if (is.null(res) || is.null(res$masterlist)) {
+    return(tibble())
+  }
+  
+  items <- res$masterlist
+  items <- items[names(items) != "session"]
+  
+  map_dfr(items, function(x) {
+    tibble(
+      legiscan_bill_id = x$bill_id %||% NA_integer_,
+      number = x$number %||% x$bill_number %||% NA_character_,
+      title_api = x$title %||% NA_character_
+    )
+  }) %>%
+    mutate(
+      number_clean = str_to_upper(str_replace_all(number, "\\s+", ""))
+    )
+}
+
+
+session_cache <- new.env(parent = emptyenv())
+
+get_state_year_master <- function(state_abbr, year) {
+  cache_key <- paste(state_abbr, year, sep = "_")
+  
+  if (exists(cache_key, envir = session_cache)) {
+    return(get(cache_key, envir = session_cache))
+  }
+  
+  sessions <- get_sessions_for_state(state_abbr)
+  
+  if (nrow(sessions) == 0) {
+    out <- tibble()
+    assign(cache_key, out, envir = session_cache)
+    return(out)
+  }
+  
+  possible_sessions <- sessions %>%
+    filter(
+      year >= year_start,
+      year <= year_end
+    )
+  
+  if (nrow(possible_sessions) == 0) {
+    possible_sessions <- sessions %>%
+      filter(year_start == year | year_end == year)
+  }
+  
+  if (nrow(possible_sessions) == 0) {
+    out <- tibble()
+    assign(cache_key, out, envir = session_cache)
+    return(out)
+  }
+  
+  out <- map_dfr(possible_sessions$session_id, function(sid) {
+    get_master_list(sid) %>%
+      mutate(session_id = sid)
+  })
+  
+  assign(cache_key, out, envir = session_cache)
+  out
+}
+
+# Match the bills
+find_legiscan_bill_id <- function(state_abbr, year, bill_number) {
+  master <- get_state_year_master(state_abbr, year)
+  
+  if (nrow(master) == 0) {
+    return(list(
+      id = NA_integer_,
+      status = "no session/master list"
+    ))
+  }
+  
+  bill_number_clean <- str_to_upper(str_replace_all(bill_number, "\\s+", ""))
+  
+  matched <- master %>%
+    filter(number_clean == bill_number_clean)
+  
+  if (nrow(matched) == 0) {
+    close_matches <- master %>%
+      filter(str_detect(number_clean, str_extract(bill_number_clean, "[0-9]+"))) %>%
+      slice_head(n = 5) %>%
+      pull(number) %>%
+      paste(collapse = ", ")
+    
+    return(list(
+      id = NA_integer_,
+      status = paste0(
+        "no exact match for ", bill_number_clean,
+        "; close number matches: ", close_matches
+      )
+    ))
+  }
+  
+  list(
+    id = matched$legiscan_bill_id[1],
+    status = paste("matched", matched$number[1], "in session", matched$session_id[1])
+  )
+}
+
+# find author and partisanship
+get_bill_author <- function(legiscan_bill_id) {
+  if (is.na(legiscan_bill_id)) {
+    return("N/A")
+  }
+  
+  res <- legiscan_get(list(
+    op = "getBill",
+    id = legiscan_bill_id
+  ))
+  
+  if (is.null(res) || is.null(res$bill) || is.null(res$bill$sponsors)) {
+    return("N/A")
+  }
+  
+  sponsors <- res$bill$sponsors
+  
+  if (length(sponsors) == 0) {
+    return("N/A")
+  }
+  
+  sponsor_df <- map_dfr(sponsors, function(x) {
+    tibble(
+      name = x$name %||% NA_character_,
+      sponsor_type_id = x$sponsor_type_id %||% NA_integer_,
+      sponsor_order = x$sponsor_order %||% NA_integer_
+    )
+  }) %>%
+    filter(!is.na(name), name != "")
+  
+  if (nrow(sponsor_df) == 0) {
+    return("N/A")
+  }
+  
+  primary <- sponsor_df %>%
+    filter(sponsor_type_id == 1 | sponsor_order == 1)
+  
+  if (nrow(primary) > 0) {
+    return(paste(unique(primary$name), collapse = "; "))
+  }
+  
+  paste(unique(sponsor_df$name), collapse = "; ")
+}
+
+
+bills$legiscan_bill_id <- NA_integer_
+bills$legiscan_match_status <- NA_character_
+
+rows_to_fill <- which(
+  is.na(bills$author) |
+    bills$author == "" |
+    bills$author == "N/A"
+)
+
+for (i in rows_to_fill) {
+  cat("\nProcessing row", i, "of", nrow(bills), "\n")
+  cat("Original bill_id:", bills$bill_id_original[i], "\n")
+  cat("Using:", bills$state_abbr[i], bills$bill_number[i], bills$year[i], "\n")
+  
+  match_result <- find_legiscan_bill_id(
+    state_abbr = bills$state_abbr[i],
+    year = bills$year[i],
+    bill_number = bills$bill_number[i]
+  )
+  
+  bills$legiscan_bill_id[i] <- match_result$id
+  bills$legiscan_match_status[i] <- match_result$status
+  
+  bills$author[i] <- get_bill_author(match_result$id)
+  
+  cat("Match:", match_result$status, "\n")
+  cat("Author:", bills$author[i], "\n")
+}
+
+# export 
+bills <- bills %>%
+  select(-any_of(c(
+    "bill_part",
+    "bill_prefix",
+    "bill_digits"
+  )))
+
+# write_xlsx(bills, output_file)
+
+cat("\nDone. File saved as:", output_file, "\n")
+```

@@ -2,16 +2,20 @@
 title: "Assignment 4"
 ---
 
+# Text Analytics Using Quanteda
+
 ```{r}
 #| label: setup
 #| message: false
 #| warning: false
 
 packageneeded <- c(
+  "pdftools",
+  "tidyverse",
   "quanteda",
   "quanteda.textstats",
   "quanteda.textplots",
-  "tidyverse"
+  "quanteda.textmodels"
 )
 
 new_packages <- packageneeded[
@@ -22,51 +26,94 @@ if (length(new_packages)) {
   install.packages(new_packages, dependencies = TRUE)
 }
 
+library(pdftools)
+library(tidyverse)
 library(quanteda)
 library(quanteda.textstats)
 library(quanteda.textplots)
-library(tidyverse)
+library(quanteda.textmodels)
 
-corp_inaug <- ("Users/patrickheldebrandt/Desktop/EPPS6323/USDOD")
 
-summary(corp_inaug, 5)
+PATH_DATA <- "/Users/patrickheldebrandt/Desktop/EPPS6323/USDOD"
 
-table(corp_inaug$Party)
-table(corp_inaug$Year)
+pdf_files <- list.files(
+  PATH_DATA,
+  pattern = "\\.pdf$",
+  full.names = TRUE,
+  ignore.case = TRUE
+)
 
-corp_inaug$period <- case_when(
-  corp_inaug$Year < 1900 ~ "Pre_1900",
-  corp_inaug$Year >= 1900 ~ "Post_1900",
+cat("Found", length(pdf_files), "PDF files\n")
+
+
+
+read_pdf_safe <- function(filepath) {
+  tryCatch({
+    pages <- pdftools::pdf_text(filepath)
+    text <- paste(pages, collapse = "\n")
+    return(text)
+  }, error = function(e) {
+    warning("Failed to read: ", basename(filepath))
+    return(NA_character_)
+  })
+}
+
+DODq <- tibble(
+  doc_id = basename(pdf_files),
+  text = map_chr(pdf_files, read_pdf_safe)
+)
+
+DODq <- DODq %>%
+  filter(!is.na(text))
+
+DODq$year <- as.numeric(str_extract(DODq$doc_id, "\\d{4}"))
+
+DODq$doc_id <- paste0("USDOD_", DODq$year, ".pdf")
+
+DODq <- arrange(DODq, year)
+
+cat("Successfully loaded", nrow(DODq), "reports\n")
+
+
+
+corp_DOD <- corpus(DODq, text_field = "text")
+
+corp_DOD$year <- DODq$year
+
+
+corp_DOD$president <- case_when(
+  corp_DOD$year <= 2000 ~ "Clinton",
+  corp_DOD$year >= 2001 & corp_DOD$year <= 2008 ~ "Bush",
+  corp_DOD$year >= 2009 & corp_DOD$year <= 2016 ~ "Obama",
+  corp_DOD$year >= 2017 & corp_DOD$year <= 2020 ~ "Trump",
+  corp_DOD$year >= 2021 & corp_DOD$year <= 2024 ~ "Biden",
+  corp_DOD$year >= 2025 ~ "Trump II",
   TRUE ~ NA_character_
 )
 
-table(corp_inaug$period)
+summary(corp_DOD, 5)
+table(corp_DOD$president)
 
-toks_inaug <- tokens(
-  corp_inaug,
+
+toks_DOD <- tokens(
+  corp_DOD,
   remove_punct = TRUE,
   remove_numbers = TRUE
 ) %>%
-  tokens_remove(stopwords("english"))
+  tokens_remove(stopwords("english")) %>%
+  tokens_remove(c(
+    "page", "figure", "table", "appendix", "chapter",
+    "https", "www", "pdf", "gov"
+  ))
 
-dfmat_inaug <- dfm(toks_inaug)
+dfmat_DOD <- dfm(toks_DOD)
 
-cat("DFM dimensions:", dim(dfmat_inaug), "\n")
-cat("Documents:", ndoc(dfmat_inaug), "| Features:", nfeat(dfmat_inaug), "\n")
+cat("DFM dimensions:", dim(dfmat_DOD), "\n")
+cat("Documents:", ndoc(dfmat_DOD), "| Features:", nfeat(dfmat_DOD), "\n")
 
-toks_inaug <- tokens(
-  corp_inaug,
-  remove_punct = TRUE,
-  remove_numbers = TRUE
-) %>%
-  tokens_remove(stopwords("english"))
+topfeat <- topfeatures(dfmat_DOD, 30)
 
-dfmat_inaug <- dfm(toks_inaug)
-
-cat("DFM dimensions:", dim(dfmat_inaug), "\n")
-cat("Documents:", ndoc(dfmat_inaug), "| Features:", nfeat(dfmat_inaug), "\n")
-
-topfeat <- topfeatures(dfmat_inaug, 30)
+print(topfeat)
 
 data.frame(
   feature = names(topfeat),
@@ -76,37 +123,175 @@ data.frame(
   geom_col() +
   coord_flip() +
   labs(
-    title = "Top 30 Features across U.S. Presidential Inaugural Speeches",
+    title = "Top 30 Features across DOD China Reports",
     x = NULL,
     y = "Frequency"
   ) +
   theme_bw(base_size = 14)
 
+
 textplot_wordcloud(
-  dfmat_inaug,
+  dfmat_DOD,
   max_words = 100
 )
 
-dfmat_party <- dfm_subset(
-  dfmat_inaug,
-  Party %in% c("Democratic", "Republican")
+
+dfmat_year <- dfm_group(
+  dfmat_DOD,
+  groups = corp_DOD$year
 )
 
-dfmat_party_grouped <- dfm_group(
-  dfmat_party,
-  groups = dfmat_party$Party
+key_terms <- c(
+  "taiwan", "pla", "nuclear", "cyber", "missile",
+  "threat", "aircraft", "carrier", "space", "ai"
 )
 
-tstat_party_key <- textstat_keyness(
-  dfmat_party_grouped,
-  target = "Democratic"
-)
+term_trends <- convert(dfmat_year, to = "data.frame") %>%
+  select(doc_id, any_of(key_terms)) %>%
+  mutate(year = as.numeric(str_extract(doc_id, "\\d{4}"))) %>%
+  pivot_longer(
+    cols = -c(doc_id, year),
+    names_to = "term",
+    values_to = "count"
+  )
 
-textplot_keyness(tstat_party_key, n = 20) +
+doc_lengths <- ntoken(dfmat_year)
+
+term_trends <- term_trends %>%
+  left_join(
+    tibble(doc_id = names(doc_lengths), total = doc_lengths),
+    by = "doc_id"
+  ) %>%
+  mutate(rate = count / total * 10000)
+
+ggplot(term_trends, aes(x = year, y = rate)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~term, scales = "free_y") +
   labs(
-    title = "Keyness: Democratic vs. Republican Inaugural Speeches",
-    subtitle = "Words more associated with Democratic speeches compared to Republican speeches"
+    title = "Key Term Frequency in DOD China Reports",
+    subtitle = "Rate per 10,000 words",
+    x = "Year",
+    y = "Rate"
   ) +
   theme_bw(base_size = 14)
+
+
+tstat_key <- textstat_keyness(
+  dfmat_DOD,
+  target = corp_DOD$president %in% c("Trump", "Trump II"),
+  measure = "lr"
+)
+
+textplot_keyness(tstat_key, n = 20) +
+  labs(
+    title = "Keyness: Trump-era vs. Other Administrations",
+    subtitle = "Words more associated with Trump-era DOD reports"
+  ) +
+  theme_bw(base_size = 14)
+
+
+dfmat_wf <- dfm_trim(
+  dfmat_DOD,
+  min_termfreq = 10,
+  max_docfreq = 0.95,
+  docfreq_type = "prop"
+)
+
+anchor_early <- which(docnames(dfmat_wf) == "USDOD_2000.pdf")
+anchor_late <- which(docnames(dfmat_wf) == "USDOD_2023.pdf")
+
+cat(
+  "Anchor documents:",
+  docnames(dfmat_wf)[anchor_early],
+  "and",
+  docnames(dfmat_wf)[anchor_late],
+  "\n"
+)
+
+tmod_wf <- textmodel_wordfish(
+  dfmat_wf,
+  dir = c(anchor_early, anchor_late)
+)
+
+summary(tmod_wf)
+
+
+doc_pos <- data.frame(
+  document = docnames(dfmat_wf),
+  theta = tmod_wf$theta,
+  year = as.numeric(str_extract(docnames(dfmat_wf), "\\d{4}")),
+  president = dfmat_wf$president,
+  stringsAsFactors = FALSE
+) %>%
+  arrange(year)
+
+print(doc_pos)
+
+ggplot(doc_pos, aes(x = year, y = theta)) +
+  geom_line(linetype = "dashed") +
+  geom_point(aes(color = president), size = 3) +
+  geom_text(aes(label = year), vjust = -1, size = 3) +
+  geom_smooth(method = "loess", se = TRUE) +
+  labs(
+    title = "DOD China Report Positioning by Year",
+    subtitle = "Estimated Wordfish latent position",
+    x = "Year",
+    y = "Theta",
+    color = "President"
+  ) +
+  theme_bw(base_size = 14)
+
+
+textplot_scale1d(tmod_wf)
+
+textplot_scale1d(
+  tmod_wf,
+  groups = dfmat_wf$president
+)
+
+textplot_scale1d(
+  tmod_wf,
+  margin = "features",
+  highlighted = c(
+    "taiwan", "pla", "nuclear", "missile",
+    "cyber", "space", "carrier", "ai"
+  )
+)
+
+
+tmod_ca <- textmodel_ca(dfmat_wf)
+
+dat_ca <- data.frame(
+  dim1 = tmod_ca$rowcoord[, 1],
+  dim2 = tmod_ca$rowcoord[, 2],
+  document = rownames(tmod_ca$rowcoord),
+  stringsAsFactors = FALSE
+)
+
+dat_ca$year <- as.numeric(str_extract(dat_ca$document, "\\d{4}"))
+dat_ca$president <- dfmat_wf$president
+
+ggplot(dat_ca, aes(x = dim1, y = dim2, color = president)) +
+  geom_point(size = 3) +
+  geom_text(aes(label = year), vjust = -1, size = 3) +
+  labs(
+    title = "Correspondence Analysis: DOD China Reports",
+    x = "Dimension 1",
+    y = "Dimension 2",
+    color = "President"
+  ) +
+  theme_minimal(base_size = 14)
+
+
+
+cat("\n========== ANALYSIS SUMMARY ==========\n")
+cat("Reports analyzed:", ndoc(corp_DOD), "\n")
+cat("Year range:", min(DODq$year), "-", max(DODq$year), "\n")
+cat("Presidents:", paste(unique(corp_DOD$president), collapse = ", "), "\n")
+cat("DFM dimensions:", dim(dfmat_DOD), "\n")
+cat("Wordfish theta range:", round(range(tmod_wf$theta), 3), "\n")
+cat("=======================================\n")
+
 
 ```

@@ -18,7 +18,7 @@ website:
             text: Assignment3
           - href: Assignment4.qmd
           - text: Assignment4
-      - href: projects.qmd
+      - href: Project_partisanship.qmd
         text: Projects
       - text: Participation 
         menu: 
