@@ -2,6 +2,10 @@
 title: "Assignment3"
 ---
 
+## Question 3
+
+### Use TEDS2016 dataset to run multiple regression model
+
 ```{r}
 #| label: setup
 #| message: false
@@ -16,6 +20,15 @@ library(GGally)
 
 TEDS_2016 <- read_stata("https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true")
 
+
+```
+
+## Question 4 
+
+### Write a function called regplot to plot a regression line
+
+```{r}
+
 ## Step 4
 
 regplot <- function(x, y) {
@@ -24,37 +37,77 @@ regplot <- function(x, y) {
   abline(fit, col = "red")
 }
 
+```
+
+## Question 5
+
+### Run a regplot on the dependent variable using: age, education, income
+
+```{r}
+
 ## Step 5
 
-teds <- na.omit(TEDS_2016[, c("votetsai", "age", "edu", "income")])
+teds <- na.omit(TEDS_2016[, c("Tondu", "age", "edu", "income")])
 
 # Age and Vote
-regplot(teds$age, teds$votetsai)
+regplot(teds$age, teds$Tondu)
 
 # Education and Vote
-regplot(teds$edu, teds$votetsai)
+regplot(teds$edu, teds$Tondu)
 
 # Income and Vote
-regplot(teds$income, teds$votetsai)
+regplot(teds$income, teds$Tondu)
 
+```
+
+## Question 6
+
+### What is the problem? Why? (Hint: how many categories in the DV?)
+
+The problem is that Tondu is a categorical/ordinal variable rather than a continuous variable. Linear regression assumes the dependent variable is continuous and that the distance. between values is consistent. Since Tondu represents categories, OLS regression. Which may produce inaccurate or misleading results.
+
+```{r}
 
 ## Step 6
 
 # What is the problem?
 # The dependent variable is binary, however, a linear regression assumes that the dependent variable must be continuous. 
 
-## Step 7
-# Conduct a logistic regression instead
-
-logistic_reg <- glm(votetsai ~ age + edu + income,
-                   data = teds,
-                   family = binomial)
-summary(logistic_reg)
-
-probs <- predict(logistic_reg, type = "response")
-pred <- ifelse(probs > 0.5, 1, 0)
-table(Predicted = pred, Actual = teds$votetsai)
-
-# allows us to model the probabilities between 0 and 1 
+table(teds$Tondu)
 
 ```
+
+## Question 7
+
+### What can be done to improve prediction of the dependent variable?
+
+Since Tondu is an ordered categorical variable, an ordered logistic regression is more appropriate than OLS.
+
+```{r}
+
+## Step 7
+
+# Since Tondu is an ordered categorical variable,
+# an ordered logistic regression is more appropriate than OLS.
+
+library(MASS)
+
+ordered_reg <- polr(as.factor(Tondu) ~ age + edu + income,
+                    data = teds,
+                    Hess = TRUE)
+
+summary(ordered_reg)
+
+# Predicted category probabilities
+probs <- predict(ordered_reg, type = "probs")
+
+# Predicted categories
+pred <- predict(ordered_reg, type = "class")
+
+# Compare predicted vs actual values
+table(Predicted = pred, Actual = teds$Tondu)
+
+# allows us to model the probabilities between 0 and 1 
+```
+
+###  

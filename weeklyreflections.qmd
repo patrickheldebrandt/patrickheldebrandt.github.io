@@ -16,89 +16,126 @@ B. I currently use ChatGPT and Claude, ChatGPT is beneficial for providing short
 
 ## Feburary 18
 
-A. Information consists of raw data while knowledge comes from an interpretation and contextualization of that information. Knowledge requires judgement and causality. Humans find knowledge through experience, trial and error, comparison. 
+A. Information consists of raw data while knowledge comes from an interpretation and contextualization of that information. Knowledge requires judgement and causality. Humans find knowledge through experience, trial and error, comparison.
 
-B. AI discrepancies and failures:
-  - Hallucination; fabricating citations, producing incorrect statistics, however, the AI will use confident tone despite uncertainty
-  - Bias; AI will mirror patterns in training data and reinforce dominant narratives. 
-  
+B. AI discrepancies and failures: - Hallucination; fabricating citations, producing incorrect statistics, however, the AI will use confident tone despite uncertainty - Bias; AI will mirror patterns in training data and reinforce dominant narratives.
+
 ## March 3
 
-Research: 
+Research:
 
 A. Association rules are a data mining technique used to discover relationships or pattens between variables in a large dataset. For example, if A happens, how likely is B to also happen.
 
-B. Data mining is the process of discovering patterns from large datasets. Unsupervised learning is a subset within machine learning. Unsupervised learning tries to learn patterns for a data set without labeled outcomes, it finds its own patterns. 
-
+B. Data mining is the process of discovering patterns from large datasets. Unsupervised learning is a subset within machine learning. Unsupervised learning tries to learn patterns for a data set without labeled outcomes, it finds its own patterns.
 
 ## March 11
 
+a\. Prediction vs. Explanation
+
+Prediction focuses on accurately forecasting outcomes, while explanation focuses on understanding the underlying causal mechanisms. In economics and public policy, this distinction matters because a model can predict well without explaining why something occurs.
+
+b\. Causal Diagram and Causal Inference
+
+**State Partisanship → Probability of AI Bill Enactment**
+
+Potential confounders include:
+
+-   state economic development,
+
+-   technology sector size,
+
+-   public concern about AI,
+
+-   lobbying activity,
+
+-   legislative professionalism.
+
+These factors may influence both state partisanship and the likelihood of AI legislation passing.
+
+A simple causal diagram would be:
+
+State Economic Conditions → State Partisanship\
+State Economic Conditions → AI Bill Enactment\
+State Partisanship → AI Bill Enactment
+
+To distinguish a causal claim from a predictive association, it is necessary to control for confounding variables and establish temporal ordering. A predictive model may show that Democratic-controlled states are more likely to pass AI legislation, but this alone does not prove causality. A causal analysis would require stronger identification strategies, such as fixed effects, quasi-experimental designs, or controlling for omitted variable bias, to isolate the independent effect of partisanship on legislative outcomes.
 
 ## March 25
-A. How can text mining reveal patterns that close reading alone cannot? What are its blind spots? 
-  
-  Text mining adds value by scaling analysis across thousands of documents and can reveal patterns that would have been impossible to detect through close reading alone. Can identify trends such as how often certain words appear across bills or quantify qualitative data for, converting texts into usable variables for regression models etc. Some blind spots within text mining is from nuance within writing; context, tone, and subtleties may be missed. 
-  
-B. How NLP and LLMs can assist in your research
-  Use LLMs to label: Policy intent, Regulatory strictness, Presence of enforcement mechanisms. Summarize papers
-extracting: Methods, Variables used, and Findings. 
 
-c. Name limitations and suggest solutions
-  LLms may Hallucinate and generate inccorect or fabricated information, the solution is always varify against the original text. In addition, they may be bias from training data thus cross checking out puts or using multiple models will help. 
-  
-d. Write an AI for research guide incorporating ethical, technical and academic concerns that could lead to more problems than solutions
+A. How can text mining reveal patterns that close reading alone cannot? What are its blind spots?
 
-Ethical considerations
-- AI outputs should not be treated as truth and should be verified with primary sources 
-- Plagiarism 
-    - AI generated text should not be used directly and be rewritten and cited correctly 
-- Hinton style conern
-    - Overeliance on AI reduces critical thinking
-    
-Technical Best practices
-- Data preprocessing
-- Coding assistance
-- Classifcation tasks
-Should not be used for 
-- Final empirical conclusions
-- or causal claims without verifcation
-Always validate outputs
-- Alernative models
-- Cross check and verify
+Text mining adds value by scaling analysis across thousands of documents and can reveal patterns that would have been impossible to detect through close reading alone. Can identify trends such as how often certain words appear across bills or quantify qualitative data for, converting texts into usable variables for regression models etc. Some blind spots within text mining is from nuance within writing; context, tone, and subtleties may be missed.
 
-Academic Concerns
-Maintain:
-- Clear research design
-- Theoretical grounding
-- Causal reasoning
-Document workflow:
-- Report how AI was used
-- What steps were verified manually
+B. How NLP and LLMs can assist in your research Use LLMs to label: Policy intent, Regulatory strictness, Presence of enforcement mechanisms. Summarize papers extracting: Methods, Variables used, and Findings.
 
-Practical Workflow
-1. Collect AI bill data
-2. Use NLP to extract features
-3. Use LLM to classify policy intent
-4. Merge with Partisanship and economic variables
-5. Run logistic regression
-6. perform robustness and validity checks 
-7. Validate with close reading of sample bills
+c.  Name limitations and suggest solutions LLms may Hallucinate and generate inccorect or fabricated information, the solution is always varify against the original text. In addition, they may be bias from training data thus cross checking out puts or using multiple models will help.
 
+d.  Write an AI for research guide incorporating ethical, technical and academic concerns that could lead to more problems than solutions
+
+Ethical considerations - AI outputs should not be treated as truth and should be verified with primary sources - Plagiarism - AI generated text should not be used directly and be rewritten and cited correctly - Hinton style concern - over reliance on AI reduces critical thinking
+
+Technical Best practices - Data reprocessing - Coding assistance - Classification tasks Should not be used for - Final empirical conclusions - or causal claims without verification Always validate outputs - Alternative models - Cross check and verify
+
+Academic Concerns Maintain: - Clear research design - Theoretical grounding - Causal reasoning Document workflow: - Report how AI was used - What steps were verified manually
+
+Practical Workflow 1. Collect AI bill data 2. Use NLP to extract features 3. Use LLM to classify policy intent 4. Merge with Partisanship and economic variables 5. Run logistic regression 6. perform robustness and validity checks 7. Validate with close reading of sample bills
 
 ## March 31
 
+b\. Strengths and Failures of LLMs
+
+Large Language Models (LLMs) perform well at tasks involving text synthesis, summarization, coding assistance, pattern recognition, and organizing large amounts of information. In research settings, they are particularly useful for generating drafts, cleaning code, explaining statistical concepts, and accelerating literature reviews. However, they still struggle with reliability and factual consistency.
+
+One important failure mode I have encountered is hallucination. While working on legislative data collection, the model occasionally generated incorrect author information or inferred political affiliations that were not explicitly present in the source material. This becomes problematic in research because fabricated information can easily contaminate datasets and reduce validity. Hallucinations are especially dangerous when the output appears confident and academically written. As a result, I found that human verification and source checking remain essential when using LLMs for empirical research.
+
+a\. Generative AI and the Future of Economics Research
+
+Over the next five years, generative AI will likely reshape economics by automating many time-intensive research tasks. Literature reviews, coding, data cleaning, text analysis, and preliminary model construction will become significantly faster. In policy research, LLMs may also improve the ability to process unstructured data such as legislation, news articles, and public comments at scale.
+
+The tasks that will change most are repetitive analytical workflows and early-stage exploratory research. Researchers will spend less time manually cleaning datasets or debugging code and more time interpreting results and designing research questions.
+
+However, causal reasoning, research design, ethical judgment, and interpretation of findings still require human oversight. Economists must determine whether a model’s conclusions are theoretically meaningful and methodologically credible. AI can assist with analysis, but human researchers are still necessary to evaluate validity, contextualize results, and make normative policy judgments.
+
 ## April 7
+
+Retrieval-Augmented Generation (RAG) is an AI framework that combines large language models with external document retrieval systems. Instead of relying only on the model’s internal training data, RAG first retrieves relevant documents, databases, or sources and then uses that information to generate a response.
+
+Grounding generation in retrieved documents improves trustworthiness because responses can be tied directly to evidence rather than generated purely from statistical patterns in the model. In research settings, this reduces hallucinations and increases transparency, since users can often trace claims back to source materials.
+
+However, recent criticisms of RAG highlight several limitations. First, retrieval quality is often inconsistent; if the system retrieves irrelevant or incomplete documents, the generated response may still be misleading. Second, RAG systems can struggle with reasoning across multiple documents or resolving conflicting information. Finally, many RAG systems still generate confident-sounding answers even when retrieved evidence is weak.
 
 ## April 14
 
-A. A knowledge graph is a data structure that represents information as entities (nodes) and relationships (edges).
+a\. Knowledge Graphs and Knowledge Mining
+
+A knowledge graph is a structured representation of information that stores entities and the relationships between them. Unlike a traditional relational database, which mainly stores data in tables with predefined schemas, a knowledge graph emphasizes connections and semantic relationships across data points. A vector store, by comparison, focuses on embedding-based similarity search and is primarily designed for retrieving semantically similar text rather than explicitly modeling relationships.
+
+Relationships between entities are valuable for knowledge mining because they allow researchers to analyze networks, dependencies, and patterns that are difficult to observe in flat datasets. Knowledge graphs make it possible to connect people, organizations, policies, and events in a way that better reflects real world interactions. This is especially useful in policy and legislative research, where outcomes are often shaped by interconnected political and institutional factors.
+
+b\. Knowledge Graph Example from AI Legislation Research
+
+In my research domain, three possible entities are:
+
+-   AI Bill
+
+-   State Legislature
+
+-   Bill Sponsor
+
+Three relationships could include:
+
+-   *introduced_in* → connects an AI bill to a state legislature
+
+-   *sponsored_by* → connects a bill to a legislator
+
+-   *belongs_to_party* → connects a sponsor to a political party
+
+This structure would allow more complex questions to be answered than a flat dataset alone. For example, a knowledge graph could identify which political networks are most associated with successful AI legislation, trace collaborations between sponsors across states, or examine how party affiliation influences specific categories of AI policy. A flat dataset may store the same variables, but it is less effective at capturing interconnected relationships and multi-step queries across entities.
 
 ## April 21
 
+AI for Science and Agentic AI Systems
 
+“AI for Science” refers to the use of artificial intelligence to accelerate scientific discovery, automate research tasks, and assist with analyzing complex data. Rather than simply generating text, AI systems can support hypothesis generation, literature synthesis, simulation, coding, and large-scale pattern detection across scientific domains.
 
-
-
-
-
-
+Agentic AI systems extend these capabilities by incorporating planning, tool use, and multi-step reasoning. Unlike single-prompt interactions, where the model responds once to a user query, agentic systems can break problems into stages, retrieve external information, execute tools such as coding environments or databases, evaluate intermediate outputs, and iteratively refine results.

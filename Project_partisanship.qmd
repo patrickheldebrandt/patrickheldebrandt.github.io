@@ -136,7 +136,7 @@ setwd("/Users/patrickheldebrandt/Desktop/Knowledge_Mining_R")
 input_file  <- "Book5.xlsx"
 output_file <- "us_ai_legislation_with_authors_legiscan.xlsx"
 
-LEGISCAN_KEY <- "2ecd4e5a2ec496148bddf44f58177237"
+LEGISCAN_KEY <- "legiscanAPI_key"
 
 
 bills <- read_excel(input_file)

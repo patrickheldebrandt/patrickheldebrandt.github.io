@@ -4,6 +4,18 @@ title: "Assignment 4"
 
 # Text Analytics Using Quanteda
 
+## Question 1: Quanteda Tutorial
+
+Quanteda workflow \> create a corpus, tokenize the text, remove unnecessary words, build a matrix, then analyze word patterns. Quanteda is useful because it converts large collections of text into structured data that can be compared.
+
+\[Quanteda Tutorial\] (<https://tutorials.quanteda.io>)
+
+## Question 2a - U.S. Presidential Inaugural Speeches
+
+The inaugural speeches can be compared by using word frequencies, common themes, and differences across presidents or parties. Similarities will also appear as themes will be repeats, such as nation, people, freedom, government, while differences can reflect historical context, political party, or the issues emphasized by each administration.
+
+### Set up Environment
+
 ```{r}
 #| label: setup
 #| message: false
@@ -33,6 +45,16 @@ library(quanteda.textstats)
 library(quanteda.textplots)
 library(quanteda.textmodels)
 
+
+```
+
+## Question 2b - U.S. Department of Defense Reports
+
+The DOD reports were analyzed by reading the PDF files, converting them into text, and creating a quanteda corpus. After tokenizing and cleaning the text, the reports were transformed into a document feature matrix. Allowing the analysis to identify the most common terms, track key defense relation words over time, and compare language across presidential administrations.
+
+### Analyze U.S. Department of Defense Reports
+
+```{r}
 
 PATH_DATA <- "/Users/patrickheldebrandt/Desktop/EPPS6323/USDOD"
 
@@ -176,6 +198,13 @@ ggplot(term_trends, aes(x = year, y = rate)) +
   ) +
   theme_bw(base_size = 14)
 
+```
+
+## What is Wordfish
+
+Wordfish is able to estimate the latent position of documents based on word usage. Documents that use similar vocabulary are placed closer together, while documents with different language patterns are placed further apart. We use Wordfish to help compare how the language of DOD reports change over time.
+
+```{r}
 
 tstat_key <- textstat_keyness(
   dfmat_DOD,
@@ -215,6 +244,16 @@ tmod_wf <- textmodel_wordfish(
 )
 
 summary(tmod_wf)
+
+```
+
+## Question 3a - Run Wordfish on DOD reports
+
+First we trim the document feature matrix to remove very rare and overly common terms. To set the direction of the scale we select anchor documents, this allows us to use the Wordfish model to estimate a theta value for each report, which represents the report's position on the latent text scale.
+
+### The Compare Positions Using Scaling Methods
+
+```{r}
 
 
 doc_pos <- data.frame(
@@ -259,7 +298,6 @@ textplot_scale1d(
   )
 )
 
-
 tmod_ca <- textmodel_ca(dfmat_wf)
 
 dat_ca <- data.frame(
@@ -285,6 +323,18 @@ ggplot(dat_ca, aes(x = dim1, y = dim2, color = president)) +
 
 
 
+```
+
+## Question 4
+
+\*\*Wordfish\*\* is a one dimensional scaling model that estimate the latent position of each document based on patterns in word usage. This makes it useful for identifying broad shifts in strategic language or emphasis across years and presidential administrations.
+
+\*\*Correspondence\*\* analysis provides a multidimensional comparison of reports, as opposed to placing documents along a single scale, correspondence analysis can display documents and terms across multiple dimensions making it easier to identify clusters and relationship among reports.
+
+## Final Summary
+
+```{r}
+
 cat("\n========== ANALYSIS SUMMARY ==========\n")
 cat("Reports analyzed:", ndoc(corp_DOD), "\n")
 cat("Year range:", min(DODq$year), "-", max(DODq$year), "\n")
@@ -292,6 +342,4 @@ cat("Presidents:", paste(unique(corp_DOD$president), collapse = ", "), "\n")
 cat("DFM dimensions:", dim(dfmat_DOD), "\n")
 cat("Wordfish theta range:", round(range(tmod_wf$theta), 3), "\n")
 cat("=======================================\n")
-
-
 ```

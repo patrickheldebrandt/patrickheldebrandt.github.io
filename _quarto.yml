@@ -4,40 +4,70 @@ project:
 
 website:
   title: "Patrick Heldebrandt"
+  description: "Economics, data analysis, and policy research"
+  site-url: "https://patrickheldebrandt.github.io"
   navbar:
+    background: primary
+    foreground: light
+    search: true
     left:
       - href: index.qmd
         text: Home
-      - text: EPPS6323 Assignments
+
+      - text: EPPS 6323 Assignments
         menu:
           - href: Assignment1.qmd
-            text: Assignment1
+            text: Assignment 1
           - href: Assignment2.qmd
-            text: Assignment2
+            text: Assignment 2
           - href: Assignment3.qmd
-            text: Assignment3
+            text: Assignment 3
           - href: Assignment4.qmd
-          - text: Assignment4
-      - href: Project_partisanship.qmd
-        text: Projects
-      - text: Participation 
-        menu: 
+            text: Assignment 4
+
+      - text: Projects
+        menu:
+          - href: Project_partisanship.qmd
+            text: AI Bill Partisanship Project
+
+      - text: Participation
+        menu:
           - href: weeklyreflections.qmd
             text: Weekly Reflections
           - href: log.qmd
             text: AI Collaboration Log
-          - href: readingnotebook.qmd
-            text: Reading Notebook            
-      - href: about.qmd
-        text: About
+
+
+    right:
+      - icon: github
+        href: https://github.com/patrickheldebrandt
+      - icon: envelope
+        href: mailto:your-email@example.com
+
+  page-footer:
+    left: "© 2026 Patrick Heldebrandt"
+    right:
+      - text: "Built with Quarto"
+        href: https://quarto.org/
 
 format:
   html:
     theme:
-      - cosmo
-      - brand
+      light:
+        - cosmo
+        - brand
+      dark:
+        - darkly
+        - brand
     css: styles.css
     toc: true
+    toc-location: right
+    smooth-scroll: true
+    page-layout: full
+    code-fold: true
+    code-tools: true
+    code-copy: true
+    highlight-style: github
+    link-external-newwindow: true
 
 editor: visual
-

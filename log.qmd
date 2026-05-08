@@ -27,6 +27,80 @@ Logistic regression models the probability that an outcome equals 1. The coeffic
 
 # Assignment 4
 
+# AI Collaboration Log
+
+## Overview
+
+ChatGPT was used as a supplementary tool for: - debugging R and Quarto errors, - understanding quanteda and Wordfish workflows, - organizing project structure, - improving code readability, - and interpreting concepts.
+
+------------------------------------------------------------------------
+
+## Example Interaction 1 — PDF Parsing Errors
+
+### User Prompt
+
+``` text
+Why is pdftools failing to read some of the DOD PDF reports?
+```
+
+### AI Response Summary
+
+-   Suggested using `tryCatch()` for safer PDF ingestion
+-   Recommended identifying malformed PDFs individually
+-   Explained that some government PDFs may lack proper text layers
+-   Proposed filtering failed documents before corpus construction
+
+### Author Actions
+
+-   Implemented the revised ingestion function
+-   Removed unreadable PDF files from the corpus
+-   Continued preprocessing with valid reports only
+
+------------------------------------------------------------------------
+
+##  Wordfish Scaling
+
+### User Prompt
+
+``` text
+What is Wordfish and how should I interpret theta values?
+```
+
+### AI Response Summary
+
+-   Explained Wordfish as a latent text scaling model
+-   Described theta values as estimated document positions
+-   Recommended using early and late reports as anchor documents
+-   Suggested comparing Wordfish with correspondence analysis
+
+### Author Actions
+
+-   Applied Wordfish to the trimmed DFM
+-   Interpreted report movement across presidential administrations
+-   Compared scaling results with correspondence analysis plots
+
+------------------------------------------------------------------------
+
+## Quarto Website Formatting
+
+### User Prompt
+
+``` text
+How should I display R code on my Quarto website without executing it?
+```
+
+### AI Response Summary
+
+-   Recommended using fenced markdown code blocks
+-   Suggested avoiding executable chunks for portfolio display
+-   Explained collapsible code sections and formatting options
+
+### Author Actions
+
+-   Reorganized project sections into workflow-based headings
+-   Added markdown code blocks for reproducibility
+-   Structured the website by assignment questions
+
 # Project - Author and State Partisanship AI logs
 
 ```{r setup, include=FALSE}
